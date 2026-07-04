@@ -1,8 +1,8 @@
 import {
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    TouchableOpacityProps,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableOpacityProps,
 } from "react-native";
 
 type ButtonProps = TouchableOpacityProps & {
@@ -21,13 +21,14 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: 48,
-    borderRadius: 8,
-    backgroundColor: "#FFC43F",
+    borderRadius: 30,
+    backgroundColor: "#0002CC",
   },
 
   label: {
-    color: "#101016",
+    color: "#FFFFFF",
     fontSize: 16,
+    fontFamily: "Baloo2_700Bold",
     fontWeight: 600,
     textAlign: "center",
     gap: "12",

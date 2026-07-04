@@ -1,7 +1,6 @@
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -16,44 +15,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 
-export default function Cadastro() {
-  const [nome, setNome] = useState("");
+export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [confirmarsenha, setConfirmarsenha] = useState("");
+  const [mostrar, setMostrar] = useState(false);
 
-  const [mostrarSenha, setMostrarSenha] = useState(false);
-  const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
-
-  const cadastrar = () => {
-    if (!email.trim() || !senha.trim()) {
-      return Alert.alert("Entrar", "Preencha todo os campos para se cadastrar");
-    }
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!regex.test(email)) {
-      Alert.alert("Email", "Use um email válido");
-      return;
-    }
-
-    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-    if (!regexSenha.test(senha)) {
-      Alert.alert(
-        "Senha",
-        "A senha precisa ter 8 caracteres, letras maiúsculas e minúsculas, números e caracteres especiais",
-      );
-      return;
-    }
-
-    if (senha !== confirmarsenha) {
-      Alert.alert("Senha", "As senhas não coincidem");
-      return;
-    }
-
-    const dados = { nome, email, senha };
-    console.log(JSON.stringify(dados));
-
-    Alert.alert("Cadastro", "Cadastro realizado com sucesso");
-    router.replace("/login");
+  const entrar = () => {
+    router.push("/apelido");
   };
 
   return (
@@ -68,28 +36,22 @@ export default function Cadastro() {
         >
           <View style={styles.card}>
             <View style={styles.header}>
-              <Text style={styles.title}>Cadastre-se!</Text>
+              <Text style={styles.title}>Olá!</Text>
               <Image
-                source={require("../assets/Joana/JoanaL1.png")}
+                source={require("../assets/Joana/JoanaLm.gif")}
                 style={styles.logo}
               />
             </View>
 
             <Text style={styles.subtitle}>
-              Crie uma conta para começar a aprender!
+              Bem vindo ao insecta! Seu novo app para aprender
             </Text>
 
             <View style={styles.form}>
-              <Text style={styles.label}>Nome</Text>
-              <Input
-                placeholder="Seu nome"
-                value={nome}
-                onChangeText={setNome}
-              />
-
               <Text style={styles.label}>Email</Text>
               <Input
                 placeholder="seuemail@exemplo.com"
+                placeholderTextColor="#8A8A8E"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
@@ -101,17 +63,18 @@ export default function Cadastro() {
                 <Input
                   style={styles.inputInner}
                   placeholder="••••••••"
-                  secureTextEntry={!mostrarSenha}
+                  placeholderTextColor="#8A8A8E"
+                  secureTextEntry={!mostrar}
                   value={senha}
                   onChangeText={setSenha}
                 />
                 <TouchableOpacity
-                  onPress={() => setMostrarSenha(!mostrarSenha)}
+                  onPress={() => setMostrar(!mostrar)}
                   style={styles.eyeButton}
                 >
                   <Image
                     source={
-                      mostrarSenha
+                      mostrar
                         ? require("../assets/Icons/eye (1).png")
                         : require("../assets/Icons/show (1).png")
                     }
@@ -120,37 +83,15 @@ export default function Cadastro() {
                 </TouchableOpacity>
               </View>
 
-              <Text style={styles.label}>Confirmar senha</Text>
-              <View style={styles.inputWithIcon}>
-                <Input
-                  style={styles.inputInner}
-                  placeholder="••••••••"
-                  secureTextEntry={!mostrarConfirmar}
-                  value={confirmarsenha}
-                  onChangeText={setConfirmarsenha}
-                />
-                <TouchableOpacity
-                  onPress={() => setMostrarConfirmar(!mostrarConfirmar)}
-                  style={styles.eyeButton}
-                >
-                  <Image
-                    source={
-                      mostrarConfirmar
-                        ? require("../assets/Icons/eye (1).png")
-                        : require("../assets/Icons/show (1).png")
-                    }
-                    style={styles.eyeIcon}
-                  />
-                </TouchableOpacity>
-              </View>
+              <Text style={styles.forgotText}>Esqueceu a senha?</Text>
 
-              <Button label="Cadastrar" onPress={cadastrar} />
+              <Button label="Entrar" onPress={entrar} />
             </View>
 
             <Text style={styles.footerText}>
-              Já tem uma conta?{" "}
-              <Link href="/login" style={styles.footerLink}>
-                Clique aqui!
+              Não tem uma conta?{" "}
+              <Link href="/signup" style={styles.footerLink}>
+                Crie aqui!
               </Link>
             </Text>
           </View>
@@ -163,7 +104,7 @@ export default function Cadastro() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#101016",
+    backgroundColor: "#ffffff",
   },
 
   scrollContent: {
@@ -181,7 +122,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 100,
     height: 100,
-    marginTop: 20,
+    marginTop: 10,
   },
 
   card: {
@@ -231,6 +172,12 @@ const styles = StyleSheet.create({
   eyeIcon: {
     width: 20,
     height: 20,
+  },
+
+  forgotText: {
+    color: "#A0A0A8",
+    fontSize: 13,
+    textAlign: "right",
   },
 
   footerText: {
