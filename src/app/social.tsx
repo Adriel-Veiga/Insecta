@@ -13,15 +13,21 @@ export default function Social() {
       <View style={styles.downBar}></View>
       <Link href="/social" style={styles.socialL}>
         <Image
-          source={require("../assets/users-alt (3).png")}
+          source={require("../assets/Icons/users-alt (3).png")}
           style={styles.social}
         />
       </Link>
       <Link href="/main" style={styles.homeL}>
-        <Image source={require("../assets/home (2).png")} style={styles.home} />
+        <Image
+          source={require("../assets/Icons/home (2).png")}
+          style={styles.home}
+        />
       </Link>
       <Link href="/user" style={styles.userL}>
-        <Image source={require("../assets/user (2).png")} style={styles.user} />
+        <Image
+          source={require("../assets/Icons/user (2).png")}
+          style={styles.user}
+        />
       </Link>
     </View>
   );

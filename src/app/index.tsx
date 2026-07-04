@@ -1,7 +1,6 @@
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -22,114 +21,79 @@ export default function Login() {
   const [mostrar, setMostrar] = useState(false);
 
   const entrar = () => {
-    if (!email.trim() || !senha.trim()) {
-      return Alert.alert("Entrar", "Preencha email e senha para entrar");
-    }
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!regex.test(email)) {
-      Alert.alert("Email", "Use um email válido");
-      return;
-    }
-
-    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-
-    if (!regexSenha.test(senha)) {
-      Alert.alert(
-        "Senha",
-        "A senha precisa ter 8 caracteres, letras maiúsculas e minúsculas, números e caracteres especiais",
-      );
-
-      return;
-    }
-
-    const dados = {
-      email,
-      senha,
-    };
-    const json = JSON.stringify(dados);
-    console.log(json);
-
     router.push("/apelido");
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#101016" }}>
+    <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
-        style={{ flex: 1, backgroundColor: "#101016" }}
+        style={{ flex: 1 }}
         behavior={Platform.select({ ios: "padding", android: "height" })}
       >
         <ScrollView
-          style={{ backgroundColor: "#101016" }}
-          contentContainerStyle={{
-            flexGrow: 1,
-            backgroundColor: "#101016",
-            paddingBottom: 100,
-          }}
+          contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.container}>
-            <Image
-              source={require("../assets/logonaope.png")}
-              style={styles.image}
-            />
-            <View style={styles.login}>
+          <View style={styles.card}>
+            <View style={styles.header}>
               <Text style={styles.title}>Olá!</Text>
-              <Text style={styles.subtitle}>
-                Bem vindo ao insecta! Seu novo app para aprender
-              </Text>
-              <View style={styles.form}>
-                <Text style={styles.suptext}>Email:</Text>
-                <Input
-                  placeholder=" "
-                  keyboardType="email-address"
-                  onChangeText={setEmail}
-                  autoCapitalize="none"
-                  value={email}
-                />
+              <Image
+                source={require("../assets/Joana/JoanaLm.gif")}
+                style={styles.logo}
+              />
+            </View>
 
-                <Text style={styles.suptext}>Senha:</Text>
+            <Text style={styles.subtitle}>
+              Bem vindo ao insecta! Seu novo app para aprender
+            </Text>
+
+            <View style={styles.form}>
+              <Text style={styles.label}>Email</Text>
+              <Input
+                placeholder="seuemail@exemplo.com"
+                placeholderTextColor="#8A8A8E"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+              />
+
+              <Text style={styles.label}>Senha</Text>
+              <View style={styles.inputWithIcon}>
                 <Input
-                  placeholder=" "
+                  style={styles.inputInner}
+                  placeholder="••••••••"
+                  placeholderTextColor="#8A8A8E"
                   secureTextEntry={!mostrar}
-                  onChangeText={setSenha}
                   value={senha}
+                  onChangeText={setSenha}
                 />
-
                 <TouchableOpacity
                   onPress={() => setMostrar(!mostrar)}
-                  style={{
-                    position: "absolute",
-                    width: 40,
-                    height: 40,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    transform: [{ translateY: 125 }, { translateX: 300 }],
-                  }}
+                  style={styles.eyeButton}
                 >
                   <Image
                     source={
                       mostrar
-                        ? require("../assets/eye.png")
-                        : require("../assets/show.png")
+                        ? require("../assets/Icons/eye (1).png")
+                        : require("../assets/Icons/show (1).png")
                     }
-                    style={styles.eye}
+                    style={styles.eyeIcon}
                   />
                 </TouchableOpacity>
-
-                <Text style={styles.footerText}>
-                  Esquceu a senha? Clique aqui!
-                </Text>
-                <Button label="Entrar" onPress={entrar} />
               </View>
 
-              <Text style={styles.footerText}>
-                Não tem uma conta?{" "}
-                <Link href="/signup" style={styles.footerLink}>
-                  Crie aqui!
-                </Link>
-              </Text>
+              <Text style={styles.forgotText}>Esqueceu a senha?</Text>
+
+              <Button label="Entrar" onPress={entrar} />
             </View>
+
+            <Text style={styles.footerText}>
+              Não tem uma conta?{" "}
+              <Link href="/signup" style={styles.footerLink}>
+                Crie aqui!
+              </Link>
+            </Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -138,59 +102,92 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#101016",
+  safe: {
     flex: 1,
+    backgroundColor: "#0d0d0f",
   },
 
-  login: {
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: "center",
-    borderRadius: 40,
-    padding: 20,
-    paddingTop: 100,
+    padding: 24,
   },
 
-  image: {
-    width: 130,
-    height: 130,
-    justifyContent: "center",
-    transform: [{ translateY: 275 }, { translateX: 270 }],
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  logo: {
+    width: 100,
+    height: 100,
+    marginTop: 10,
+  },
+
+  card: {
+    backgroundColor: "#18181F",
+    borderRadius: 24,
+    padding: 24,
   },
 
   title: {
     color: "#fff",
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
   },
 
   subtitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  suptext: {
-    color: "#fff",
+    color: "#A0A0A8",
+    fontSize: 15,
+    marginTop: 6,
+    marginBottom: 24,
   },
 
   form: {
-    marginTop: 24,
-    gap: 12,
+    gap: 14,
+  },
+
+  label: {
+    color: "#D0D0D5",
+    fontSize: 13,
+    marginBottom: -6,
+  },
+
+  inputWithIcon: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  inputInner: {
+    flex: 1,
+  },
+
+  eyeButton: {
+    position: "absolute",
+    right: 12,
+    padding: 4,
+  },
+
+  eyeIcon: {
+    width: 20,
+    height: 20,
+  },
+
+  forgotText: {
+    color: "#A0A0A8",
+    fontSize: 13,
+    textAlign: "right",
   },
 
   footerText: {
-    color: "#fff",
-    marginLeft: 5,
+    color: "#A0A0A8",
+    textAlign: "center",
+    marginTop: 20,
   },
 
   footerLink: {
     color: "#FFC43F",
-    fontWeight: 700,
-  },
-
-  eye: {
-    width: 22,
-    height: 22,
-    position: "absolute",
+    fontWeight: "700",
   },
 });

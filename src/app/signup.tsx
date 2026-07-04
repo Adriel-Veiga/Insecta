@@ -21,152 +21,138 @@ export default function Cadastro() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmarsenha, setConfirmarsenha] = useState("");
-  const [mostrar, setMostrar] = useState(false);
+
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
 
   const cadastrar = () => {
     if (!email.trim() || !senha.trim()) {
       return Alert.alert("Entrar", "Preencha todo os campos para se cadastrar");
     }
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     if (!regex.test(email)) {
-      alert("Use um email válido");
+      Alert.alert("Email", "Use um email válido");
       return;
     }
-    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
+    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
     if (!regexSenha.test(senha)) {
-      alert(
+      Alert.alert(
+        "Senha",
         "A senha precisa ter 8 caracteres, letras maiúsculas e minúsculas, números e caracteres especiais",
       );
-
       return;
     }
 
     if (senha !== confirmarsenha) {
-      alert("As senhas não coincidem");
+      Alert.alert("Senha", "As senhas não coincidem");
       return;
     }
 
-    const dados = {
-      nome,
-      email,
-      senha,
-    };
-    const json = JSON.stringify(dados);
-    console.log(json);
+    const dados = { nome, email, senha };
+    console.log(JSON.stringify(dados));
 
-    alert("Cadastro realizado com sucesso");
+    Alert.alert("Cadastro", "Cadastro realizado com sucesso");
     router.replace("/");
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#101016" }}>
+    <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
-        style={{ flex: 1, backgroundColor: "#101016" }}
+        style={{ flex: 1 }}
         behavior={Platform.select({ ios: "padding", android: "height" })}
       >
         <ScrollView
-          style={{ backgroundColor: "#101016" }}
-          contentContainerStyle={{
-            flexGrow: 1,
-            backgroundColor: "#101016",
-            paddingBottom: 100,
-          }}
+          contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.container}>
-            <View>
-              <Image
-                source={require("../assets/logo voando.png")}
-                style={styles.image}
-              />
+          <View style={styles.card}>
+            <View style={styles.header}>
               <Text style={styles.title}>Cadastre-se!</Text>
-              <Text style={styles.subtitle}>
-                Crie uma conta para começar a aprender!
-              </Text>
+              <Image
+                source={require("../assets/Joana/JoanaL1.png")}
+                style={styles.logo}
+              />
+            </View>
 
-              <View style={styles.form}>
-                <Text style={styles.suptext}>Nome:</Text>
-                <Input placeholder=" " value={nome} onChangeText={setNome} />
+            <Text style={styles.subtitle}>
+              Crie uma conta para começar a aprender!
+            </Text>
 
-                <Text style={styles.suptext}>Email:</Text>
+            <View style={styles.form}>
+              <Text style={styles.label}>Nome</Text>
+              <Input
+                placeholder="Seu nome"
+                value={nome}
+                onChangeText={setNome}
+              />
+
+              <Text style={styles.label}>Email</Text>
+              <Input
+                placeholder="seuemail@exemplo.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+              />
+
+              <Text style={styles.label}>Senha</Text>
+              <View style={styles.inputWithIcon}>
                 <Input
-                  placeholder=" "
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  value={email}
-                  onChangeText={setEmail}
-                />
-
-                <Text style={styles.suptext}>Senha:</Text>
-                <Input
-                  placeholder=" "
-                  secureTextEntry={!mostrar}
+                  style={styles.inputInner}
+                  placeholder="••••••••"
+                  secureTextEntry={!mostrarSenha}
                   value={senha}
                   onChangeText={setSenha}
                 />
-
                 <TouchableOpacity
-                  onPress={() => setMostrar(!mostrar)}
-                  style={{
-                    position: "absolute",
-                    width: 40,
-                    height: 40,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    transform: [{ translateY: 219 }, { translateX: 300 }],
-                  }}
+                  onPress={() => setMostrarSenha(!mostrarSenha)}
+                  style={styles.eyeButton}
                 >
                   <Image
                     source={
-                      mostrar
-                        ? require("../assets/eye.png")
-                        : require("../assets/show.png")
+                      mostrarSenha
+                        ? require("../assets/Icons/eye (1).png")
+                        : require("../assets/Icons/show (1).png")
                     }
-                    style={styles.eye}
+                    style={styles.eyeIcon}
                   />
                 </TouchableOpacity>
+              </View>
 
-                <Text style={styles.suptext}>Confrimar senha:</Text>
+              <Text style={styles.label}>Confirmar senha</Text>
+              <View style={styles.inputWithIcon}>
                 <Input
-                  placeholder=" "
-                  secureTextEntry={!mostrar}
+                  style={styles.inputInner}
+                  placeholder="••••••••"
+                  secureTextEntry={!mostrarConfirmar}
                   value={confirmarsenha}
                   onChangeText={setConfirmarsenha}
                 />
-
                 <TouchableOpacity
-                  onPress={() => setMostrar(!mostrar)}
-                  style={{
-                    position: "absolute",
-                    width: 40,
-                    height: 40,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    transform: [{ translateY: 309 }, { translateX: 300 }],
-                  }}
+                  onPress={() => setMostrarConfirmar(!mostrarConfirmar)}
+                  style={styles.eyeButton}
                 >
                   <Image
                     source={
-                      mostrar
-                        ? require("../assets/eye.png")
-                        : require("../assets/show.png")
+                      mostrarConfirmar
+                        ? require("../assets/Icons/eye (1).png")
+                        : require("../assets/Icons/show (1).png")
                     }
-                    style={styles.eye}
+                    style={styles.eyeIcon}
                   />
                 </TouchableOpacity>
-
-                <Button label="Cadastrar" onPress={cadastrar} />
               </View>
 
-              <Text style={styles.footerText}>
-                Já tem uma conta?{" "}
-                <Link href="/" style={styles.footerLink}>
-                  Clique aqui!
-                </Link>
-              </Text>
+              <Button label="Cadastrar" onPress={cadastrar} />
             </View>
+
+            <Text style={styles.footerText}>
+              Já tem uma conta?{" "}
+              <Link href="/" style={styles.footerLink}>
+                Clique aqui!
+              </Link>
+            </Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -175,56 +161,86 @@ export default function Cadastro() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#101016",
+  safe: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#101016",
   },
 
-  image: {
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: 24,
+  },
+
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  logo: {
     width: 100,
     height: 100,
-    position: "absolute",
-    top: 45,
-    marginLeft: 250,
+    marginTop: 20,
+  },
+
+  card: {
+    backgroundColor: "#18181F",
+    borderRadius: 24,
+    padding: 24,
   },
 
   title: {
     color: "#fff",
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
   },
 
   subtitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  suptext: {
-    color: "#fff",
+    color: "#A0A0A8",
+    fontSize: 15,
+    marginTop: 6,
+    marginBottom: 24,
   },
 
   form: {
-    marginTop: 24,
-    gap: 12,
+    gap: 14,
   },
 
-  eye: {
-    width: 30,
-    height: 30,
+  label: {
+    color: "#D0D0D5",
+    fontSize: 13,
+    marginBottom: -6,
+  },
+
+  inputWithIcon: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  inputInner: {
+    flex: 1,
+  },
+
+  eyeButton: {
     position: "absolute",
+    right: 12,
+    padding: 4,
+  },
+
+  eyeIcon: {
+    width: 20,
+    height: 20,
   },
 
   footerText: {
+    color: "#A0A0A8",
     textAlign: "center",
-    color: "#fff",
+    marginTop: 20,
   },
 
   footerLink: {
-    textAlign: "center",
     color: "#FFC43F",
-    fontWeight: 700,
+    fontWeight: "700",
   },
 });

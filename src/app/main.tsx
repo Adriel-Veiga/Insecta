@@ -16,7 +16,7 @@ export default function Home() {
       <View style={styles.upBar}></View>
       <Link href="/config" style={styles.configL}>
         <Image
-          source={require("../assets/logolinhayellow.png")}
+          source={require("../assets/Icons/Basicolinha.png")}
           style={styles.config}
         />
       </Link>
@@ -24,14 +24,14 @@ export default function Home() {
       <View style={styles.card}>
         <View style={styles.topCard}>
           <Image
-            source={require("../assets/patchdourado1.png")}
+            source={require("../assets/Icons/avancadolinha.png")}
             style={styles.coin}
           />
           <Text style={styles.title}>Exercício 1</Text>
         </View>
         <View style={styles.miniCard}>
           <Image
-            source={require("../assets/logoempemaobixapiscada.png")}
+            source={require("../assets/Joana/JoanaU1.png")}
             style={styles.joana}
           />
         </View>
@@ -41,15 +41,21 @@ export default function Home() {
 
       <Link href="/social" style={styles.socialL}>
         <Image
-          source={require("../assets/users-alt (4).png")}
+          source={require("../assets/Icons/users-alt (4).png")}
           style={styles.social}
         />
       </Link>
       <Link href="/main" style={styles.homeL}>
-        <Image source={require("../assets/home (3).png")} style={styles.home} />
+        <Image
+          source={require("../assets/Icons/home (3).png")}
+          style={styles.home}
+        />
       </Link>
       <Link href="/user" style={styles.userL}>
-        <Image source={require("../assets/user (2).png")} style={styles.user} />
+        <Image
+          source={require("../assets/Icons/user (2).png")}
+          style={styles.user}
+        />
       </Link>
 
       <Button style={styles.start} onPress={Iniciar} label="Iniciar" />
