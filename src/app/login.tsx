@@ -34,67 +34,57 @@ export default function Login() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.card}>
-            <View style={styles.header}>
-              <Text style={styles.title}>Olá!</Text>
-              <Image
-                source={require("../assets/Joana/JoanaLm.gif")}
-                style={styles.logo}
-              />
-            </View>
-
-            <Text style={styles.subtitle}>
-              Bem vindo ao insecta! Seu novo app para aprender
-            </Text>
-
-            <View style={styles.form}>
-              <Text style={styles.label}>Email</Text>
-              <Input
-                placeholder="seuemail@exemplo.com"
-                placeholderTextColor="#8A8A8E"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
-              />
-
-              <Text style={styles.label}>Senha</Text>
-              <View style={styles.inputWithIcon}>
-                <Input
-                  style={styles.inputInner}
-                  placeholder="••••••••"
-                  placeholderTextColor="#8A8A8E"
-                  secureTextEntry={!mostrar}
-                  value={senha}
-                  onChangeText={setSenha}
-                />
-                <TouchableOpacity
-                  onPress={() => setMostrar(!mostrar)}
-                  style={styles.eyeButton}
-                >
-                  <Image
-                    source={
-                      mostrar
-                        ? require("../assets/Icons/eye (1).png")
-                        : require("../assets/Icons/show (1).png")
-                    }
-                    style={styles.eyeIcon}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <Text style={styles.forgotText}>Esqueceu a senha?</Text>
-
-              <Button label="Entrar" onPress={entrar} />
-            </View>
-
-            <Text style={styles.footerText}>
-              Não tem uma conta?{" "}
-              <Link href="/signup" style={styles.footerLink}>
-                Crie aqui!
-              </Link>
-            </Text>
+          <View style={styles.header}>
+            <Text style={styles.title}>Login</Text>
+            <Text style={styles.subtitle}>Faça login e comece agora!</Text>
           </View>
+
+          <View style={styles.form}>
+            <Text style={styles.label}>Email:</Text>
+            <Input
+              placeholder="seuemail@exemplo.com"
+              placeholderTextColor="#B0B0B8"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+
+            <Text style={styles.label}>Senha:</Text>
+            <View style={styles.inputWithIcon}>
+              <Input
+                placeholder="#Exemplo123"
+                placeholderTextColor="#B0B0B8"
+                secureTextEntry={!mostrar}
+                value={senha}
+                onChangeText={setSenha}
+              />
+              <TouchableOpacity
+                onPress={() => setMostrar(!mostrar)}
+                style={styles.eyeButton}
+              >
+                <Image
+                  source={
+                    mostrar
+                      ? require("../assets/Icons/eye.png")
+                      : require("../assets/Icons/show.png")
+                  }
+                  style={styles.eyeIcon}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.forgotText}>Esqueceu a senha?</Text>
+
+            <Button label="Entrar" onPress={entrar} />
+          </View>
+
+          <Text style={styles.footerText}>
+            Não tem uma conta?{" "}
+            <Link href="/signup" style={styles.footerLink}>
+              Crie aqui!
+            </Link>
+          </Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -114,44 +104,36 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-
-  logo: {
-    width: 100,
-    height: 100,
-    marginTop: 10,
-  },
-
-  card: {
-    backgroundColor: "#18181F",
-    borderRadius: 24,
-    padding: 24,
+    marginBottom: 8,
   },
 
   title: {
-    color: "#fff",
-    fontSize: 26,
-    fontWeight: "bold",
+    color: "#2400FF",
+    fontSize: 28,
+    fontFamily: "Baloo2_700Bold",
+    opacity: 0.9,
+    marginLeft: 7,
   },
 
   subtitle: {
-    color: "#A0A0A8",
-    fontSize: 15,
-    marginTop: 6,
+    color: "#2400FF",
+    fontSize: 20,
     marginBottom: 24,
+    fontFamily: "Baloo2_400Regular",
+    opacity: 0.6,
+    marginLeft: 7,
   },
 
   form: {
-    gap: 14,
+    gap: 12,
   },
 
   label: {
-    color: "#D0D0D5",
-    fontSize: 13,
-    marginBottom: -6,
+    color: "#535356",
+    fontSize: 14,
+    fontFamily: "600",
+    opacity: 0.8,
+    marginLeft: 9,
   },
 
   inputWithIcon: {
@@ -183,11 +165,10 @@ const styles = StyleSheet.create({
   footerText: {
     color: "#A0A0A8",
     textAlign: "center",
-    marginTop: 20,
   },
 
   footerLink: {
-    color: "#FFC43F",
+    color: "#0002CC",
     fontWeight: "700",
   },
 });

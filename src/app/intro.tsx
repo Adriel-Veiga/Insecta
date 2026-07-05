@@ -1,12 +1,12 @@
 import { router } from "expo-router";
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     color: "#243AA9",
     fontFamily: "Baloo2_700Bold",
     fontSize: 30,
-    opacity: 0.8,
+    opacity: 0.9,
     marginRight: 250,
   },
 
