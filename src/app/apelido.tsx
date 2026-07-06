@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -34,6 +35,10 @@ export default function IndexPage() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
+          <Image
+            source={require("../assets/Joana/JoanaLmi.gif")}
+            style={styles.image}
+          />
           <View style={styles.container}>
             <Text style={styles.title}>Como podemos te chamar?</Text>
             <Text style={styles.label}>Apelido:</Text>
@@ -62,6 +67,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     padding: 24,
+  },
+
+  image: {
+    width: 200,
+    height: 200,
+    alignSelf: "center",
   },
 
   header: {
