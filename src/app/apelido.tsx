@@ -2,12 +2,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -25,34 +25,26 @@ export default function IndexPage() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#101016" }}>
+    <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
-        style={{ flex: 1, backgroundColor: "#101016" }}
+        style={{ flex: 1 }}
         behavior={Platform.select({ ios: "padding", android: "height" })}
       >
         <ScrollView
-          style={{ backgroundColor: "#101016" }}
-          contentContainerStyle={{
-            flexGrow: 1,
-            backgroundColor: "#101016",
-            paddingBottom: 100,
-          }}
+          contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.container}>
-            <View style={styles.login}>
-              <Text style={styles.title}>Como podemos te chamar?</Text>
-              <View style={styles.form}>
-                <Text style={styles.suptext}>Apelido:</Text>
-                <Input
-                  placeholder=" "
-                  onChangeText={setApelido}
-                  autoCapitalize="none"
-                  value={id_usuario}
-                />
-                <Button label="Continuar" onPress={continuar} />
-              </View>
-            </View>
+            <Text style={styles.title}>Como podemos te chamar?</Text>
+            <Text style={styles.label}>Apelido:</Text>
+            <Input
+              placeholder="Seu apelido"
+              placeholderTextColor="#B0B0B8"
+              autoCapitalize="none"
+              onChangeText={setApelido}
+              value={id_usuario}
+            />
+            <Button label="Continuar" onPress={continuar} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -61,59 +53,38 @@ export default function IndexPage() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#101016",
+  safe: {
     flex: 1,
+    backgroundColor: "#ffffff",
   },
 
-  login: {
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: "center",
-    borderRadius: 40,
-    padding: 20,
-    paddingTop: 250,
+    padding: 24,
   },
 
-  image: {
-    width: 130,
-    height: 130,
-    justifyContent: "center",
-    transform: [{ translateY: 100 }, { translateX: 120 }],
+  header: {
+    marginBottom: 8,
   },
 
-  title: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-
-  subtitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  suptext: {
-    color: "#fff",
-  },
-
-  form: {
-    marginTop: 24,
+  container: {
     gap: 12,
   },
 
-  footerText: {
-    color: "#fff",
-    marginLeft: 5,
+  title: {
+    color: "#2400FF",
+    fontSize: 28,
+    fontFamily: "Baloo2_700Bold",
+    opacity: 0.9,
+    marginLeft: 7,
   },
 
-  footerLink: {
-    color: "#FFC43F",
-    fontWeight: 700,
-  },
-
-  eye: {
-    width: 30,
-    height: 30,
-    position: "absolute",
+  label: {
+    color: "#535356",
+    fontSize: 14,
+    fontFamily: "600",
+    opacity: 0.8,
+    marginLeft: 9,
   },
 });
