@@ -1,6 +1,7 @@
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -21,6 +22,24 @@ export default function Login() {
   const [mostrar, setMostrar] = useState(false);
 
   const entrar = () => {
+    if (!email.trim() || !senha.trim()) {
+      return Alert.alert("Entrar", "Preencha todo os campos para entrar");
+    }
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(email)) {
+      Alert.alert("Email", "Use um email válido");
+      return;
+    }
+
+    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    if (!regexSenha.test(senha)) {
+      Alert.alert(
+        "Senha",
+        "A senha precisa ter 8 caracteres, letras maiúsculas e minúsculas, números e caracteres especiais",
+      );
+      return;
+    }
+
     router.push("/apelido");
   };
 
@@ -157,7 +176,7 @@ const styles = StyleSheet.create({
   },
 
   forgotText: {
-    color: "#A0A0A8",
+    color: "# ",
     fontSize: 13,
     textAlign: "right",
   },
