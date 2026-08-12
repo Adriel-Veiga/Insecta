@@ -1,9 +1,14 @@
+import { AvisoSimples } from "@/components/activities/aviso-simples";
+import { AppModal } from "@/components/app-modal";
 import { Link } from "expo-router";
-import { Alert, Image, StyleSheet, View } from "react-native";
+import { useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
 
 export default function Social() {
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
   const Iniciar = () => {
-    Alert.alert(":(", "Não temos níveis disponíveis!");
+    setModalVisible(true);
   };
 
   return (
@@ -29,6 +34,13 @@ export default function Social() {
           style={styles.user}
         />
       </Link>
+      <AppModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+        <AvisoSimples
+          title=":("
+          message="Não temos níveis disponíveis!"
+          onClose={() => setModalVisible(false)}
+        />
+      </AppModal>
     </View>
   );
 }
