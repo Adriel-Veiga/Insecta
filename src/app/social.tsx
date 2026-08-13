@@ -10,7 +10,6 @@ export default function Social() {
   const Iniciar = () => {
     setModalVisible(true);
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.upBar}></View>
