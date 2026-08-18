@@ -1,15 +1,17 @@
+import { db } from "@/database/db";
+import * as Crypto from "expo-crypto";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -25,7 +27,7 @@ export default function Cadastro() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
 
-  const cadastrar = () => {
+  const cadastrar = async () => {
     if (!email.trim() || !senha.trim()) {
       return Alert.alert("Entrar", "Preencha todo os campos para se cadastrar");
     }
@@ -48,12 +50,27 @@ export default function Cadastro() {
       Alert.alert("Senha", "As senhas não coincidem");
       return;
     }
+    try {
+      // gera um hash da senha (tira do txt)
+      const senhaHash = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        senha,
+      );
 
-    const dados = { nome, email, senha };
-    console.log(JSON.stringify(dados));
+      await db.runAsync(
+        "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)",
+        [nome, email, senhaHash],
+      );
 
-    Alert.alert("Cadastro", "Cadastro realizado com sucesso");
-    router.replace("/login");
+      Alert.alert("Cadastro", "Cadastro realizado com sucesso");
+      router.replace("/login");
+    } catch (erro) {
+      console.log(erro);
+      Alert.alert(
+        "Erro",
+        "Não foi possível cadastrar. Talvez esse email já exista.",
+      );
+    }
   };
 
   return (
