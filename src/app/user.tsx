@@ -8,6 +8,8 @@ export default function Perfil() {
   const params = useLocalSearchParams();
   const [apel, setApel] = useState<string>("");
 
+  // a tela tenta primeiro usar o apelido vindo pela rota; se ele não existir,
+  // recupera o valor salvo no armazenamento local para manter o usuário logado em contexto.
   useEffect(() => {
     const paramApelido = (params as any).apelido;
     if (paramApelido) {

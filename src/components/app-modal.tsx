@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import { Modal, StyleSheet, View } from "react-native";
 
-// Essa "type" descreve as props que o AppModal aceita.
-// children é o TIPO especial que representa "qualquer JSX" (texto, view, botão...)
+// esta type define a estrutura mínima que o modal precisa receber: visibilidade,
+// callback de fechamento e o conteúdo dinâmico que será renderizado dentro dele.
+// children é o tipo especial que aceita qualquer JSX, como texto, botões e componentes.
 type AppModalProps = {
   visible: boolean;
   onClose: () => void;

@@ -27,6 +27,7 @@ export default function Cadastro() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
 
+  // esse fluxo garante que a conta só seja gravada quando todos os dados estiverem válidos
   const cadastrar = async () => {
     if (!email.trim() || !senha.trim()) {
       return Alert.alert("Entrar", "Preencha todo os campos para se cadastrar");
@@ -51,7 +52,7 @@ export default function Cadastro() {
       return;
     }
     try {
-      // gera um hash da senha (tira do txt)
+      // gera um hash da senha para que o valor armazenado não fique em texto no banco de dados
       const senhaHash = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
         senha,

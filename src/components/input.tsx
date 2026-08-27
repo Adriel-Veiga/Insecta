@@ -1,5 +1,7 @@
 import { StyleSheet, TextInput, TextInputProps } from "react-native";
 
+// este wrapper centraliza o estilo padrão dos inputs para manter consistência entre as telas,
+// sem precisar repetir a mesma configuração em cada campo do formulário.
 export function Input({ ...rest }: TextInputProps) {
   return <TextInput style={styles.input} {...rest} />;
 }

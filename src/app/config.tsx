@@ -3,6 +3,8 @@ import { Link } from "expo-router";
 import { Alert, Image, StyleSheet, Text, View } from "react-native";
 
 export default function IndexPage() {
+  // esta tela é estática e não tem fluxo complexo; a intenção é apenas apresentar a proposta do app
+  // enquanto o restante das funcionalidades segue em desenvolvimento.
   const Iniciar = () => {
     Alert.alert(":(", "Não temos níveis disponíveis!");
   };

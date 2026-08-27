@@ -1,15 +1,15 @@
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -21,6 +21,7 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [mostrar, setMostrar] = useState(false);
 
+  // valida o formulário antes de avançar, pois o fluxo depende de dados consistentes,a regra de senha é mais rígida do que um simples campo obrigatório
   const entrar = () => {
     if (!email.trim() || !senha.trim()) {
       return Alert.alert("Entrar", "Preencha todo os campos para entrar");
@@ -40,6 +41,7 @@ export default function Login() {
       return;
     }
 
+    // só navega para a próxima etapa quando a credencial passou por todas as validações.
     router.push("/apelido");
   };
 

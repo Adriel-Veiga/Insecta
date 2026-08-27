@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { StyleSheet, Text } from "react-native";
 
 export default function SplashScreen() {
+  // deixa a tela inicial por 2 segundos antes de mandar o usuário para a intro,
+  // evitando uma troca imediata e dando tempo visual para a identidade do app aparecer.
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace("/intro");

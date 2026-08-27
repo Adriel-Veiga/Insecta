@@ -1,5 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+// este componente serve como caixa de aviso reutilizável: ele recebe o título, a mensagem
+// e a ação de fechar para poder ser usado em diferentes pontos do app sem duplicar layout.
 type AvisoSimplesProps = {
   title: string;
   message: string;

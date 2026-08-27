@@ -1,10 +1,12 @@
 import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TouchableOpacityProps,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    TouchableOpacityProps,
 } from "react-native";
 
+// o botão reutiliza as props do TouchableOpacity para aceitar eventos e estilos sem precisar
+// criar uma API própria para cada tela, deixando o uso mais simples em toda a aplicação.
 type ButtonProps = TouchableOpacityProps & {
   label: string;
 };

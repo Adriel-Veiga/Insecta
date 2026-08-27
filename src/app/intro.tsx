@@ -13,6 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/button";
 
 export default function Intro() {
+  // essa ação apenas empurra o fluxo de onboarding para a tela de login,
+  // mantendo a navegação simples e direta para a parte de autenticação.
   const avancar = () => {
     router.push("/login");
   };

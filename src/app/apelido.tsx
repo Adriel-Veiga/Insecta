@@ -2,13 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,6 +19,8 @@ import { Input } from "@/components/input";
 export default function IndexPage() {
   const [id_usuario, setApelido] = useState("");
 
+  // o apelido é salvo no AsyncStorage antes de navegar para a tela de perfil,
+  // para que a próxima tela consiga restaurar esse dado mesmo quando a rota for recarregada.
   async function continuar() {
     try {
       await AsyncStorage.setItem("apelido", id_usuario);

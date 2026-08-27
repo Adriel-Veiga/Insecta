@@ -4,6 +4,7 @@ import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/button";
 
 export default function Home() {
+  // a lógica aqui é apenas informar ao usuário que a funcionalidade ainda não foi implementada.
   const Iniciar = () => {
     Alert.alert(":(", "Não temos níveis disponíveis!");
   };

@@ -5,6 +5,8 @@ import { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
 export default function Social() {
+  // o modal fica controlado por um estado simples, que permite abrir e fechar a mensagem
+  // sem precisar criar uma rota ou estado global para essa tela temporária.
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const Iniciar = () => {
