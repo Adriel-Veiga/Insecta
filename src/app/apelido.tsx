@@ -1,3 +1,4 @@
+//TELA DE APELIDO (obviamente a tela que pergunta o apelido do usuário)
 import { getUsuarioLogadoId, salvarApelido } from "@/database/db";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -20,30 +21,29 @@ import { Input } from "@/components/input";
 export default function IndexPage() {
   const [id_usuario, setApelido] = useState("");
 
-  // o apelido é salvo no AsyncStorage antes de navegar para a tela de perfil,
-  // para que a próxima tela consiga restaurar esse dado mesmo quando a rota for recarregada.
+  // salva o apelido no banco de dados e no AsyncStorage, e navega para a tela de usuário
   async function continuar() {
     if (!id_usuario.trim()) {
-      return; // ou um Alert pedindo pra preencher
+      return; // o apelido não pode ser vazio
     }
 
     try {
       const usuarioId = await getUsuarioLogadoId();
 
       if (usuarioId) {
-        // Salva no banco, ligado ao usuário certo
+        // salva o apelido no banco de dados, associando ao usuário logado
         await salvarApelido(usuarioId, id_usuario);
       }
 
-      // Mantém no AsyncStorage também, pra acesso rápido sem consultar o banco toda hora
+      // mantém no AsyncStorage
       await AsyncStorage.setItem("apelido", id_usuario);
     } catch (erro) {
       console.log(erro);
     }
-
+    //MUDAR! troca pra tela do usuário(porque estava testando) mas vai para a tela de avaliação!!!
     router.push("/user");
   }
-
+  // componentes da tela
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
@@ -75,7 +75,7 @@ export default function IndexPage() {
     </SafeAreaView>
   );
 }
-
+// css da tela
 const styles = StyleSheet.create({
   safe: {
     flex: 1,

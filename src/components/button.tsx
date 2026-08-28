@@ -1,12 +1,13 @@
+// este componente é um botão genérico que pode ser usado em qualquer parte do app
 import {
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    TouchableOpacityProps,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableOpacityProps,
 } from "react-native";
 
 // o botão reutiliza as props do TouchableOpacity para aceitar eventos e estilos sem precisar
-// criar uma API própria para cada tela, deixando o uso mais simples em toda a aplicação.
+// criar uma API própria para cada tela, deixando o uso mais simples
 type ButtonProps = TouchableOpacityProps & {
   label: string;
 };

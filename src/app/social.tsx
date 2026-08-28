@@ -1,3 +1,4 @@
+//TELA DE SOCIAL {EM MANUTENÇÂO} (a tela onde o usuário vê os amigos e interage com eles)
 import { AvisoSimples } from "@/components/activities/aviso-simples";
 import { AppModal } from "@/components/app-modal";
 import { Link } from "expo-router";
@@ -6,12 +7,12 @@ import { Image, StyleSheet, View } from "react-native";
 
 export default function Social() {
   // o modal fica controlado por um estado simples, que permite abrir e fechar a mensagem
-  // sem precisar criar uma rota ou estado global para essa tela temporária.
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const Iniciar = () => {
     setModalVisible(true);
   };
+  // componentes da tela
   return (
     <View style={styles.container}>
       <View style={styles.upBar}></View>
@@ -45,7 +46,7 @@ export default function Social() {
     </View>
   );
 }
-
+//css da tela
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#101016",

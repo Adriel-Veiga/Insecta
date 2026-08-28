@@ -1,14 +1,15 @@
+//BANCO DE DADOS SQLITE
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SQLite from "expo-sqlite";
 
-// Abre (ou cria) o arquivo do banco dentro do dispositivo
+// abre (ou cria) o arquivo do banco dentro do dispositivo
 export const db = SQLite.openDatabaseSync("insecta.db");
 
-// Cria a tabela de usuários, se ainda não existir
+// cria a tabela de usuários, se ainda não existir
 export function iniciarBanco() {
-  // ⚠️ Temporário, só durante desenvolvimento — apaga e recria a tabela
-  // toda vez que o app abre. Remova essas duas linhas quando for pra produção,
-  // senão os usuários cadastrados são perdidos a cada reinício.
+  //TEMPORÀRIO! só durante desenvolvimento, apaga e recria a tabela
+  // remova essas duas linhas quando for pra produção,
+  // senão os usuários cadastrados são perdidos a cada reinício
   db.execSync("DROP TABLE IF EXISTS usuarios;");
 
   db.execSync(`
@@ -22,13 +23,13 @@ export function iniciarBanco() {
   `);
 }
 
-// Pega o id do usuário logado atualmente (ou null, se ninguém estiver logado)
+// pega o id do usuário logado atualmente (ou null, se ninguém estiver logado)
 export async function getUsuarioLogadoId(): Promise<number | null> {
   const id = await AsyncStorage.getItem("usuarioId");
   return id ? Number(id) : null;
 }
 
-// Salva o apelido do usuário no banco, ligado ao id dele
+// salva o apelido do usuário no banco, ligado ao id dele
 export async function salvarApelido(usuarioId: number, apelido: string) {
   await db.runAsync("UPDATE usuarios SET apelido = ? WHERE id = ?", [
     apelido,
@@ -36,7 +37,7 @@ export async function salvarApelido(usuarioId: number, apelido: string) {
   ]);
 }
 
-// Verifica se existe um usuário com esse email (retorna o id, ou null)
+// verifica se existe um usuário com esse email (retorna o id, ou null)
 export async function buscarUsuarioPorEmail(
   email: string,
 ): Promise<{ id: number } | null> {
@@ -47,7 +48,7 @@ export async function buscarUsuarioPorEmail(
   return usuario ?? null;
 }
 
-// Atualiza a senha de um usuário específico
+// atualiza a senha de um usuário específico
 export async function redefinirSenha(usuarioId: number, novaSenhaHash: string) {
   await db.runAsync("UPDATE usuarios SET senha = ? WHERE id = ?", [
     novaSenhaHash,

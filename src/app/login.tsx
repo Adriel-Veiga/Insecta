@@ -1,3 +1,4 @@
+//TELA DE LOGIN (obviamente a tela de login do usuário)
 import { db } from "@/database/db";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
@@ -24,7 +25,7 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [mostrar, setMostrar] = useState(false);
 
-  // valida o formulário antes de avançar, pois o fluxo depende de dados consistentes,a regra de senha é mais rígida do que um simples campo obrigatório
+  // Lógica para validar o formulário antes de avançar
   const entrar = async () => {
     if (!email.trim() || !senha.trim()) {
       return Alert.alert("Entrar", "Preencha email e senha para entrar");
@@ -75,6 +76,7 @@ export default function Login() {
       Alert.alert("Erro", "Não foi possível entrar. Tente novamente.");
     }
   };
+  // componentes da tela
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
@@ -145,7 +147,7 @@ export default function Login() {
     </SafeAreaView>
   );
 }
-
+// css da tela
 const styles = StyleSheet.create({
   safe: {
     flex: 1,

@@ -1,17 +1,18 @@
+//TELA DE RECUPERAÇÃO DE SENHA (a tela onde o usuário digita a nova senha)
 import { buscarUsuarioPorEmail, redefinirSenha } from "@/database/db";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -19,7 +20,7 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 
 export default function RecuperarSenha() {
-  // Recupera o email que veio da tela anterior (remail.tsx)
+  // recupera o email que veio da tela anterior (remail.tsx)
   const { email } = useLocalSearchParams<{ email: string }>();
 
   const [novaSenha, setNovaSenha] = useState("");
@@ -29,7 +30,7 @@ export default function RecuperarSenha() {
 
   const redefinir = async () => {
     if (!email) {
-      // Segurança extra: se por algum motivo chegou aqui sem email, volta
+      // segurança extra: se por algum motivo chegou aqui sem email, volta
       Alert.alert("Erro", "Email não encontrado. Tente novamente.");
       router.replace("/remail");
       return;
@@ -54,7 +55,7 @@ export default function RecuperarSenha() {
     }
 
     try {
-      // Busca o usuário de novo (garante que ainda existe e pega o id)
+      // busca o usuário de novo (garante que ainda existe e pega o id)
       const usuario = await buscarUsuarioPorEmail(email);
 
       if (!usuario) {
@@ -79,7 +80,7 @@ export default function RecuperarSenha() {
       );
     }
   };
-
+  // componentes da tela
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
@@ -154,7 +155,7 @@ export default function RecuperarSenha() {
     </SafeAreaView>
   );
 }
-
+//css da tela
 const styles = StyleSheet.create({
   safe: {
     flex: 1,

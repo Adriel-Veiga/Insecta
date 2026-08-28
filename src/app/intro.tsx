@@ -1,24 +1,24 @@
+// TELA DE INTRODUÇÃO (primeira tela de fato que o usuário vê ao abrir o app)
 import { router } from "expo-router";
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/button";
 
 export default function Intro() {
-  // essa ação apenas empurra o fluxo de onboarding para a tela de login,
-  // mantendo a navegação simples e direta para a parte de autenticação.
+  // função para avançar para a tela de login
   const avancar = () => {
     router.push("/login");
   };
-
+  // componentes da tela
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
@@ -45,7 +45,7 @@ export default function Intro() {
     </SafeAreaView>
   );
 }
-
+// css da tela
 const styles = StyleSheet.create({
   safe: {
     flex: 1,

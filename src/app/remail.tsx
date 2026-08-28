@@ -1,14 +1,15 @@
+//TELA DE RECUPERAÇÃO DE EMAIL (a tela onde o usuário digita o email para recuperar a senha)
 import { buscarUsuarioPorEmail } from "@/database/db";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -30,7 +31,7 @@ export default function RecuperarEmail() {
     }
 
     try {
-      // Confere se existe um usuário com esse email
+      // confere se existe um usuário com esse email
       const usuario = await buscarUsuarioPorEmail(email);
 
       if (!usuario) {
@@ -41,7 +42,7 @@ export default function RecuperarEmail() {
         return;
       }
 
-      // Passa o email como parâmetro pra próxima tela
+      // passa o email como parâmetro pra próxima tela
       router.push({
         pathname: "/rsenha",
         params: { email },
@@ -54,7 +55,7 @@ export default function RecuperarEmail() {
       );
     }
   };
-
+  // componentes da tela
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
@@ -98,7 +99,7 @@ export default function RecuperarEmail() {
     </SafeAreaView>
   );
 }
-
+//css da tela
 const styles = StyleSheet.create({
   safe: {
     flex: 1,

@@ -1,3 +1,4 @@
+//TELA PRINCIPAL {EM MANUTENÇÂO} (a tela principal do app, onde o usuário vê os exercícios e navega para outras telas)
 import { Link } from "expo-router";
 import { Alert, Image, StyleSheet, Text, View } from "react-native";
 
@@ -11,7 +12,7 @@ export default function Home() {
   function Social() {
     Alert.alert(":(", "Página indisponível no momento");
   }
-
+  // componentes da tela
   return (
     <View style={styles.container}>
       <View style={styles.upBar}></View>
@@ -63,7 +64,7 @@ export default function Home() {
     </View>
   );
 }
-
+// css da tela
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#101016",

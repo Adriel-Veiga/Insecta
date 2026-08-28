@@ -1,3 +1,4 @@
+//TELA DE PERFIL {EM MANUTENÇÂO} (a tela onde o usuário vê seu perfil, conquistas e amigos)
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -24,7 +25,7 @@ export default function Perfil() {
       })
       .catch(() => {});
   }, [params]);
-
+  // componentes da tela
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#101016" }}>
       <ScrollView
@@ -91,7 +92,7 @@ export default function Perfil() {
     </SafeAreaView>
   );
 }
-
+//css da tela
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#101016",

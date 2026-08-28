@@ -1,3 +1,4 @@
+//EXTREMAMENTE IMPORTANTE: ESTE ARQUIVO É RESPONSÁVEL POR INICIAR O BANCO DE DADOS E MUDAR O LAYOUT DE TODAS AS TELAS
 import { iniciarBanco } from "@/database/db";
 import { Baloo2_400Regular, Baloo2_700Bold } from "@expo-google-fonts/baloo-2";
 import {
@@ -6,13 +7,11 @@ import {
 } from "@expo-google-fonts/pixelify-sans";
 import { Stack } from "expo-router";
 
-// o banco precisa ser inicializado logo no carregamento do app para que as telas
-// consigam consultar ou gravar dados sem depender de uma ordem manual de execução
+// ja inicia o bannco de dados antes de renderizar as telass
 iniciarBanco();
 
 export default function Layout() {
-  // carrega as fontes personalizadas antes de renderizar a navegação, para evitar que
-  // o texto apareça com um tipo errado durante o primeiro frame do app
+  // carrega as fontes personalizadas antes de renderizar a navegaçãoo
   const [fontsLoaded] = useFonts({
     PixelifySans_400Regular,
     Baloo2_400Regular,
@@ -22,6 +21,6 @@ export default function Layout() {
   if (!fontsLoaded) {
     return null;
   }
-
+  //retorna a navegação com as telas do app
   return <Stack screenOptions={{ headerShown: false }} />;
 }

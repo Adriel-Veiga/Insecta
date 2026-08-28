@@ -1,3 +1,4 @@
+//TELA DE CADASTRO (a tela onde o usuário cria uma conta)
 import { db } from "@/database/db";
 import * as Crypto from "expo-crypto";
 import { Link, router } from "expo-router";
@@ -57,7 +58,7 @@ export default function Cadastro() {
         Crypto.CryptoDigestAlgorithm.SHA256,
         senha,
       );
-
+      // insere o usuário no banco de dados
       await db.runAsync(
         "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)",
         [nome, email, senhaHash],
@@ -75,7 +76,7 @@ export default function Cadastro() {
       }
     }
   };
-
+  // componentes da tela
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
@@ -175,7 +176,7 @@ export default function Cadastro() {
     </SafeAreaView>
   );
 }
-
+// css da tela
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
