@@ -65,12 +65,14 @@ export default function Cadastro() {
 
       Alert.alert("Cadastro", "Cadastro realizado com sucesso");
       router.replace("/login");
-    } catch (erro) {
+    } catch (erro: any) {
       console.log(erro);
-      Alert.alert(
-        "Erro",
-        "Não foi possível cadastrar. Talvez esse email já exista.",
-      );
+
+      if (String(erro?.message).includes("UNIQUE")) {
+        Alert.alert("Cadastro", "Esse email já está cadastrado. Tente entrar.");
+      } else {
+        Alert.alert("Erro", "Não foi possível cadastrar. Tente novamente.");
+      }
     }
   };
 

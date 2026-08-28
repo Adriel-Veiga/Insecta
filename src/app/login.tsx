@@ -1,3 +1,6 @@
+import { db } from "@/database/db";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Crypto from "expo-crypto";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import {
@@ -22,17 +25,19 @@ export default function Login() {
   const [mostrar, setMostrar] = useState(false);
 
   // valida o formulário antes de avançar, pois o fluxo depende de dados consistentes,a regra de senha é mais rígida do que um simples campo obrigatório
-  const entrar = () => {
+  const entrar = async () => {
     if (!email.trim() || !senha.trim()) {
-      return Alert.alert("Entrar", "Preencha todo os campos para entrar");
+      return Alert.alert("Entrar", "Preencha email e senha para entrar");
     }
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!regex.test(email)) {
       Alert.alert("Email", "Use um email válido");
       return;
     }
 
     const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
     if (!regexSenha.test(senha)) {
       Alert.alert(
         "Senha",
@@ -41,10 +46,35 @@ export default function Login() {
       return;
     }
 
-    // só navega para a próxima etapa quando a credencial passou por todas as validações.
-    router.push("/apelido");
-  };
+    try {
+      const senhaHash = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        senha,
+      );
 
+      const usuario = await db.getFirstAsync<{
+        id: number;
+        nome: string;
+        email: string;
+      }>("SELECT id, nome, email FROM usuarios WHERE email = ? AND senha = ?", [
+        email,
+        senhaHash,
+      ]);
+
+      if (!usuario) {
+        Alert.alert("Entrar", "Email ou senha incorretos");
+        return;
+      }
+
+      // guarda o id do usuário logado, pra outras telas saberem "quem é"
+      await AsyncStorage.setItem("usuarioId", String(usuario.id));
+
+      router.push("/apelido");
+    } catch (erro) {
+      console.log(erro);
+      Alert.alert("Erro", "Não foi possível entrar. Tente novamente.");
+    }
+  };
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView

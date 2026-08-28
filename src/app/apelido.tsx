@@ -1,3 +1,4 @@
+import { getUsuarioLogadoId, salvarApelido } from "@/database/db";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -22,9 +23,24 @@ export default function IndexPage() {
   // o apelido é salvo no AsyncStorage antes de navegar para a tela de perfil,
   // para que a próxima tela consiga restaurar esse dado mesmo quando a rota for recarregada.
   async function continuar() {
+    if (!id_usuario.trim()) {
+      return; // ou um Alert pedindo pra preencher
+    }
+
     try {
+      const usuarioId = await getUsuarioLogadoId();
+
+      if (usuarioId) {
+        // Salva no banco, ligado ao usuário certo
+        await salvarApelido(usuarioId, id_usuario);
+      }
+
+      // Mantém no AsyncStorage também, pra acesso rápido sem consultar o banco toda hora
       await AsyncStorage.setItem("apelido", id_usuario);
-    } catch (erro) {}
+    } catch (erro) {
+      console.log(erro);
+    }
+
     router.push("/user");
   }
 
