@@ -125,8 +125,12 @@ export default function Login() {
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.forgotText}>Esqueceu a senha?</Text>
-
+            <Text style={styles.footerText}>
+              Esqueceu a senha?{" "}
+              <Link href="/remail" style={styles.footerLink}>
+                Clique aqui!
+              </Link>
+            </Text>
             <Button label="Entrar" onPress={entrar} />
           </View>
 

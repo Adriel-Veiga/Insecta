@@ -35,3 +35,22 @@ export async function salvarApelido(usuarioId: number, apelido: string) {
     usuarioId,
   ]);
 }
+
+// Verifica se existe um usuário com esse email (retorna o id, ou null)
+export async function buscarUsuarioPorEmail(
+  email: string,
+): Promise<{ id: number } | null> {
+  const usuario = await db.getFirstAsync<{ id: number }>(
+    "SELECT id FROM usuarios WHERE email = ?",
+    [email],
+  );
+  return usuario ?? null;
+}
+
+// Atualiza a senha de um usuário específico
+export async function redefinirSenha(usuarioId: number, novaSenhaHash: string) {
+  await db.runAsync("UPDATE usuarios SET senha = ? WHERE id = ?", [
+    novaSenhaHash,
+    usuarioId,
+  ]);
+}
