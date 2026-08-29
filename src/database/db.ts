@@ -18,7 +18,8 @@ export function iniciarBanco() {
       nome TEXT,
       email TEXT UNIQUE NOT NULL,
       senha TEXT NOT NULL,
-      apelido TEXT
+      apelido TEXT,
+      nível TEXT
     );
   `);
 }
@@ -52,6 +53,14 @@ export async function buscarUsuarioPorEmail(
 export async function redefinirSenha(usuarioId: number, novaSenhaHash: string) {
   await db.runAsync("UPDATE usuarios SET senha = ? WHERE id = ?", [
     novaSenhaHash,
+    usuarioId,
+  ]);
+}
+
+// salva o nível do usuário no banco, ligado ao id dele
+export async function salvarNivel(usuarioId: number, nivel: string) {
+  await db.runAsync("UPDATE usuarios SET nivel = ? WHERE id = ?", [
+    nivel,
     usuarioId,
   ]);
 }

@@ -41,7 +41,7 @@ export default function IndexPage() {
       console.log(erro);
     }
     //MUDAR! troca pra tela do usuário(porque estava testando) mas vai para a tela de avaliação!!!
-    router.push("/user");
+    router.push("/nivel-intro");
   }
   // componentes da tela
   return (
