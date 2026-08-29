@@ -1,3 +1,4 @@
+//TELA DE CONFIRMAÇÃO DE NÍVEL (a tela que aparece depois da escolha do nível, para confirmar a escolha)
 import { getUsuarioLogadoId, salvarNivel } from "@/database/db";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -5,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/button";
 
-// Objeto de configuração: a "fonte da verdade" de cada nível
+// configuração: a "fonte da verdade" de cada nível
 const conteudoPorNivel = {
   iniciante: {
     titulo: "Iniciante",
@@ -32,7 +33,7 @@ export default function NivelConfirmar() {
     nivel: keyof typeof conteudoPorNivel;
   }>();
 
-  // Se por algum motivo o parâmetro vier errado ou vazio, evita quebrar a tela
+  // se o parâmetro vier errado ou vazio, evita quebrar a tela
   const dados = nivel ? conteudoPorNivel[nivel] : null;
 
   const confirmar = async () => {
@@ -52,7 +53,7 @@ export default function NivelConfirmar() {
   };
 
   if (!dados) {
-    // Caso alguém chegue nessa tela sem escolher nível (ex: digitando a URL direto)
+    // caso alguém chegue nessa tela sem escolher nível (ex: digitando a URL direto)
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.container}>
@@ -62,7 +63,7 @@ export default function NivelConfirmar() {
       </SafeAreaView>
     );
   }
-
+  // componentes da tela
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
@@ -86,7 +87,7 @@ export default function NivelConfirmar() {
     </SafeAreaView>
   );
 }
-
+//css da tela
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: "#ffffff" },
   container: {

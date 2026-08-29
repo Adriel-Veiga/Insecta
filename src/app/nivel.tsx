@@ -1,12 +1,13 @@
+//TELA DE ESCOLHA DE NÍVEL (a tela onde o usuário escolhe seu nível de conhecimento)
 import { router } from "expo-router";
 import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/button";
-
+// importa funções do banco de dados
 type NivelOpcao = "iniciante" | "intermediario" | "avancado";
-
+// lista de opções de nível, com chave, label e ícone
 const opcoes: { chave: NivelOpcao; label: string; icone: any }[] = [
   {
     chave: "iniciante",
@@ -36,7 +37,7 @@ export default function Nivel() {
       params: { nivel: selecionado },
     });
   };
-
+  // componentes da tela
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
@@ -59,7 +60,7 @@ export default function Nivel() {
     </SafeAreaView>
   );
 }
-
+// css da tela
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: "#ffffff" },
   container: {
