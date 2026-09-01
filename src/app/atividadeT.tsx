@@ -1,5 +1,7 @@
-//TELA DE PERFIL {EM MANUTENÇÂO} (a tela onde o usuário vê seu perfil, conquistas e amigos)
+// TELA FINAL DE ATIVIDADE (mensagem de falha, caso o usuário não tenha atingido a nota mínima)
+import { router } from "expo-router";
 import {
+    Image,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -9,7 +11,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function User() {
+import { Button } from "@/components/button";
+
+export default function Intro() {
+  // função para avançar para a tela de login
+  const voltar = () => {
+    router.push("/nivel");
+  };
   // componentes da tela
   return (
     <SafeAreaView style={styles.safe}>
@@ -22,7 +30,16 @@ export default function User() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.content}>
-            <Text style={styles.title}>EM MANUTENÇÃO</Text>
+            <Image
+              source={require("../assets/Joana/JoanaBm.gif")}
+              style={styles.image}
+            />
+            <Text style={styles.title}>Caramba!</Text>
+            <Text style={styles.subtitle}>
+              É, você não deveria estar aqui ainda. Mas tudo bem, vamos te levar
+              de volta para a tela de escolha de nível.
+            </Text>
+            <Button label="Voltar" onPress={voltar} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -58,6 +75,7 @@ const styles = StyleSheet.create({
     fontFamily: "Baloo2_700Bold",
     fontSize: 30,
     opacity: 0.9,
+    marginRight: 175,
   },
 
   subtitle: {

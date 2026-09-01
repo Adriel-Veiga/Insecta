@@ -28,32 +28,39 @@ const conteudoPorNivel = {
   },
 };
 
+const avancar = () => {
+  router.push("/nivel-transicao");
+};
+
 export default function NivelConfirmar() {
-  const { nivel } = useLocalSearchParams<{
+  const { nivel, nivelPretendido } = useLocalSearchParams<{
     nivel: keyof typeof conteudoPorNivel;
+    nivelPretendido?: string;
   }>();
 
-  // se o parâmetro vier errado ou vazio, evita quebrar a tela
   const dados = nivel ? conteudoPorNivel[nivel] : null;
+
+  // Só é "rebaixamento" se veio de uma prova E o resultado foi diferente do pretendido
+  const foiRebaixado = nivelPretendido && nivelPretendido !== nivel;
 
   const confirmar = async () => {
     if (!nivel) return;
-
     try {
       const usuarioId = await getUsuarioLogadoId();
-
       if (usuarioId) {
         await salvarNivel(usuarioId, nivel);
       }
-
       router.push("/user");
     } catch (erro) {
       console.log(erro);
     }
   };
 
+  const tentarNovamente = () => {
+    router.push("/nivel");
+  };
+  // componentes da tela
   if (!dados) {
-    // caso alguém chegue nessa tela sem escolher nível (ex: digitando a URL direto)
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.container}>
@@ -63,7 +70,7 @@ export default function NivelConfirmar() {
       </SafeAreaView>
     );
   }
-  // componentes da tela
+
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
@@ -75,14 +82,29 @@ export default function NivelConfirmar() {
           <Text style={styles.texto}>{dados.texto}</Text>
         </View>
 
-        <Button label="Avançar" onPress={confirmar} />
+        {foiRebaixado && (
+          <View style={styles.cardAviso}>
+            <Text style={styles.textoAviso}>
+              Você ficou pertinho! Que tal tentar de novo?
+            </Text>
+          </View>
+        )}
+        <Button label="Avançar" onPress={avancar} />
 
-        <Text style={styles.footerText}>
-          Mudou de ideia?{" "}
-          <Link href="/nivel" style={styles.footerLink}>
-            Volte aqui!
-          </Link>
-        </Text>
+        {foiRebaixado ? (
+          <Button
+            label="Tentar novamente"
+            onPress={tentarNovamente}
+            style={styles.botaoSecundario}
+          />
+        ) : (
+          <Text style={styles.footerText}>
+            Quer tentar outro nível?{" "}
+            <Link href="/nivel" style={styles.footerLink}>
+              Escolher de novo
+            </Link>
+          </Text>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -132,5 +154,24 @@ const styles = StyleSheet.create({
   footerLink: {
     color: "#0002CC",
     fontWeight: "700",
+  },
+
+  botaoSecundario: {
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "#0002CC",
+  },
+  cardAviso: {
+    backgroundColor: "#FFF4D6",
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "#F0DFA0",
+  },
+  textoAviso: {
+    color: "#8A6D00",
+    fontSize: 15,
+    fontFamily: "Baloo2_700Bold",
+    textAlign: "center",
   },
 });
