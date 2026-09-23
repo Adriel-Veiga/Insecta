@@ -8,8 +8,8 @@ import { Button } from "@/components/button";
 import { MultiplaEscolha } from "@/components/multipla-escolha";
 import { getUsuarioLogadoId, salvarNivel } from "@/database/db";
 import {
-    perguntasAvancado,
-    perguntasIntermediario,
+  perguntasAvancado,
+  perguntasIntermediario,
 } from "@/database/perguntas";
 
 // nota de porcentagem mínima pra ser aprovado
@@ -70,7 +70,7 @@ export default function Atividade() {
             <Text
               style={{ color: "#2400FF", fontSize: 20, textAlign: "center" }}
             >
-              Parabéns — você foi aprovado!
+              Parabéns você foi aprovado!
             </Text>
             <Text style={{ color: "#A0A0A8", textAlign: "center" }}>
               Toque abaixo para ir para seu perfil.
