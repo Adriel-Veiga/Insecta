@@ -1,5 +1,6 @@
-// PÁGINA INICIAL DO APP (exibe os cartões de atividades, progresso e configurações)
+// PÁGINA INICIAL DO APP (lista de atividades, progresso e configurações)
 import { AppModal } from "@/components/app-modal";
+import { CirculoProgresso } from "@/components/circulo-progresso";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
@@ -13,13 +14,14 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// TIPO DA ATIVIDADE (estrutura dos cards exibidos na tela inicial)
+// TIPO DA ATIVIDADE (estrutura de cada item da lista)
 type Atividade = {
   id: number;
   titulo: string;
   descricao: string;
-  imagem: any;
+  progresso: number; // 0 a 100
   bloqueado: boolean;
+  cor: string;
 };
 
 // LISTA DE ATIVIDADES (dados fixos do catálogo de tarefas do app)
@@ -29,35 +31,70 @@ const atividades: Atividade[] = [
     titulo: "Atividade 1",
     descricao:
       "Nessa atividade você vai aprender os conceitos básicos de hardware, identificando as principais peças de um computador.",
-    imagem: require("../../assets/Icons/cartucho1.gif"),
+    progresso: 40,
     bloqueado: false,
+    cor: "#5B5FEF",
   },
   {
     id: 2,
     titulo: "Atividade 2",
     descricao: "Descrição da atividade 2...",
-    imagem: require("../../assets/Icons/cartucho1.png"),
-    bloqueado: true,
+    progresso: 0,
+    bloqueado: false,
+    cor: "#3730A3",
   },
   {
     id: 3,
     titulo: "Atividade 3",
     descricao: "Descrição da atividade 3...",
-    imagem: require("../../assets/Icons/cartucho1.png"),
+    progresso: 0,
+    bloqueado: false,
+    cor: "#5B5FEF",
+  },
+  {
+    id: 4,
+    titulo: "Atividade 4",
+    descricao: "Descrição da atividade 4...",
+    progresso: 0,
     bloqueado: true,
+    cor: "#7B7FA6",
+  },
+  {
+    id: 5,
+    titulo: "Atividade 5",
+    descricao: "Descrição da atividade 5...",
+    progresso: 0,
+    bloqueado: true,
+    cor: "#A5A8DB",
+  },
+  {
+    id: 6,
+    titulo: "Atividade 6",
+    descricao: "Descrição da atividade 6...",
+    progresso: 0,
+    bloqueado: true,
+    cor: "#7B7FA6",
+  },
+  {
+    id: 7,
+    titulo: "Atividade 7",
+    descricao: "Descrição da atividade 7...",
+    progresso: 0,
+    bloqueado: true,
+    cor: "#A5A8DB",
   },
 ];
 
-// PROGRESSO DO USUÁRIO (conta quantas atividades já estão liberadas)
+// PROGRESSO GERAL (conta quantas atividades já estão liberadas)
 const concluidas = atividades.filter((a) => !a.bloqueado).length;
-const progresso = concluidas / atividades.length;
+const progressoGeral = concluidas / atividades.length;
 
-// PÁGINA INICIAL (exibe os cartões de atividades, progresso e configurações)
+// PÁGINA INICIAL
 export default function IndexPage() {
   const [selecionada, setSelecionada] = useState<Atividade | null>(null);
   const [configuracoesAberta, setConfiguracoesAberta] = useState(false);
 
-  // FUNÇÃO PARA ABRIR DETALHES (bloqueia cartões fechados)
+  // FUNÇÃO PARA ABRIR DETALHES (bloqueia itens fechados)
   function abrirDetalhes(atividade: Atividade) {
     if (atividade.bloqueado) return;
     setSelecionada(atividade);
@@ -84,7 +121,7 @@ export default function IndexPage() {
           <View
             style={[
               styles.preenchimentoProgresso,
-              { width: `${progresso * 100}%` },
+              { width: `${progressoGeral * 100}%` },
             ]}
           />
         </View>
@@ -109,46 +146,34 @@ export default function IndexPage() {
         />
       </TouchableOpacity>
 
-      {/* CARTUCHOS ROLÁVEIS */}
+      {/* LISTA VERTICAL DE ATIVIDADES */}
       <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.trilha}
-        style={styles.trilhaWrapper}
+        contentContainerStyle={styles.lista}
+        showsVerticalScrollIndicator={false}
       >
         {atividades.map((atividade) => (
-          <View key={atividade.id} style={styles.card}>
-            <Text style={styles.cardTitulo}>{atividade.titulo}</Text>
+          <TouchableOpacity
+            key={atividade.id}
+            style={[
+              styles.pill,
+              { backgroundColor: atividade.cor },
+              atividade.bloqueado && styles.pillBloqueada,
+            ]}
+            onPress={() => abrirDetalhes(atividade)}
+            disabled={atividade.bloqueado}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.pillTexto}>{atividade.titulo}</Text>
 
-            <View style={styles.cartuchoContainer}>
+            {atividade.bloqueado ? (
               <Image
-                source={atividade.imagem}
-                style={[
-                  styles.cartucho,
-                  atividade.bloqueado && styles.cartuchoBloqueado,
-                ]}
+                source={require("../../assets/Icons/lock.png")}
+                style={styles.cadeadoIcone}
               />
-              {atividade.bloqueado && (
-                <View style={styles.cadeadoOverlay}>
-                  <Image
-                    source={require("../../assets/Icons/lock.png")}
-                    style={styles.cadeadoIcone}
-                  />
-                </View>
-              )}
-            </View>
-
-            <TouchableOpacity
-              style={[
-                styles.startBotao,
-                atividade.bloqueado && styles.startBotaoDesabilitado,
-              ]}
-              onPress={() => abrirDetalhes(atividade)}
-              disabled={atividade.bloqueado}
-            >
-              <Text style={styles.startTexto}>Start</Text>
-            </TouchableOpacity>
-          </View>
+            ) : (
+              <CirculoProgresso porcentagem={atividade.progresso} />
+            )}
+          </TouchableOpacity>
         ))}
       </ScrollView>
 
@@ -208,7 +233,7 @@ export default function IndexPage() {
   );
 }
 
-// ESTILOS DA TELA (layout, tipografia e aparência dos elementos)
+// ESTILOS DA TELA
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
@@ -242,11 +267,6 @@ const styles = StyleSheet.create({
     height: 24,
   },
 
-  menuBotao: {
-    marginTop: 20,
-    marginLeft: 20,
-  },
-
   menuCirculo: {
     width: 44,
     height: 44,
@@ -264,77 +284,36 @@ const styles = StyleSheet.create({
     height: 22,
   },
 
-  trilhaWrapper: {
-    marginTop: 50,
-  },
-
-  trilha: {
-    flexDirection: "row",
-    gap: 20,
-    paddingHorizontal: 20,
-    paddingBottom: 120,
-  },
-
-  card: {
-    width: 353,
-    height: 396,
-    backgroundColor: "#EDEDED",
-    borderRadius: 24,
-    alignItems: "center",
-    paddingVertical: 24,
+  lista: {
     gap: 16,
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 120, // espaço pra não ficar atrás da tab bar flutuante
   },
 
-  cardTitulo: {
-    color: "#2400FF",
-    fontSize: 20,
+  pill: {
+    height: 70,
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 24,
+  },
+
+  pillBloqueada: {
+    opacity: 0.85,
+  },
+
+  pillTexto: {
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
-  },
-
-  cartuchoContainer: {
-    width: 300,
-    height: 171,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  cartucho: {
-    width: 500,
-    height: 300,
-    resizeMode: "contain",
-  },
-
-  cartuchoBloqueado: {
-    opacity: 0.4,
-  },
-
-  cadeadoOverlay: {
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
   },
 
   cadeadoIcone: {
-    width: 32,
-    height: 32,
-  },
-
-  startBotao: {
-    backgroundColor: "#2400FF",
-    width: "80%",
-    paddingVertical: 14,
-    borderRadius: 30,
-    alignItems: "center",
-  },
-
-  startBotaoDesabilitado: {
-    backgroundColor: "#B0B0B8",
-  },
-
-  startTexto: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    width: 20,
+    height: 20,
+    tintColor: "#fff",
   },
 
   modalTitulo: {
@@ -358,6 +337,12 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: "center",
     marginTop: 12,
+  },
+
+  startTexto: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 
   drawerOverlay: {
