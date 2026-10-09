@@ -64,7 +64,7 @@ export default function TabsLayout() {
               source={
                 focused
                   ? require("../../assets/Icons/user(1).png")
-                  : require("../../assets/Icons/user.png")
+                  : require("../../assets/Icons/user 1.png")
               }
               style={{ width: 30, height: 30 }}
             />
