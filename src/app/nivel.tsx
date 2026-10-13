@@ -1,5 +1,6 @@
 //TELA DE ESCOLHA DE NÍVEL (a tela onde o usuário escolhe seu nível de conhecimento)
 import { router } from "expo-router";
+import { useTema } from "@/contexts/tema";
 import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -27,6 +28,7 @@ const opcoes: { chave: NivelOpcao; label: string; icone: any }[] = [
 ];
 
 export default function Nivel() {
+  const { cores } = useTema();
   const [selecionado, setSelecionado] = useState<NivelOpcao | null>(null);
 
   const avancar = () => {
@@ -39,19 +41,25 @@ export default function Nivel() {
   };
   // componentes da tela
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <View style={styles.container}>
         {opcoes.map((opcao) => (
           <TouchableOpacity
             key={opcao.chave}
             style={[
               styles.opcao,
+              {
+                backgroundColor: cores.superficieSuave,
+                borderColor: cores.borda,
+              },
               selecionado === opcao.chave && styles.opcaoSelecionada,
             ]}
             onPress={() => setSelecionado(opcao.chave)}
           >
             <Image source={opcao.icone} style={styles.icone} />
-            <Text style={styles.label}>{opcao.label}</Text>
+            <Text style={[styles.label, { color: cores.destaque }]}>
+              {opcao.label}
+            </Text>
           </TouchableOpacity>
         ))}
 
@@ -62,7 +70,7 @@ export default function Nivel() {
 }
 // css da tela
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#ffffff" },
+  safe: { flex: 1 },
   container: {
     flex: 1,
     justifyContent: "center",
@@ -76,16 +84,12 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 100,
     borderWidth: 1,
-    borderColor: "#D9D9D9",
-    backgroundColor: "#F2F2F2",
   },
   opcaoSelecionada: {
     borderWidth: 2,
-    borderColor: "#0002CC",
   },
   icone: { width: 50, height: 50 },
   label: {
-    color: "#2400FF",
     fontSize: 16,
     fontFamily: "Baloo2_700Bold",
   },

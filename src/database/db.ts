@@ -7,11 +7,6 @@ export const db = SQLite.openDatabaseSync("insecta.db");
 
 // cria a tabela de usuários, se ainda não existir
 export function iniciarBanco() {
-  //TEMPORÀRIO! só durante desenvolvimento, apaga e recria a tabela
-  // remova essas duas linhas quando for pra produção,
-  // senão os usuários cadastrados são perdidos a cada reinício
-  db.execSync("DROP TABLE IF EXISTS usuarios;");
-
   db.execSync(`
     CREATE TABLE IF NOT EXISTS usuarios (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,9 +14,19 @@ export function iniciarBanco() {
       email TEXT UNIQUE NOT NULL,
       senha TEXT NOT NULL,
       apelido TEXT,
-      nível TEXT
+      nível TEXT,
+      progresso_atividades TEXT NOT NULL DEFAULT '{}'
     );
   `);
+
+  const colunas = db.getAllSync<{ name: string }>(
+    "PRAGMA table_info(usuarios)",
+  );
+  if (!colunas.some((coluna) => coluna.name === "progresso_atividades")) {
+    db.execSync(
+      "ALTER TABLE usuarios ADD COLUMN progresso_atividades TEXT NOT NULL DEFAULT '{}';",
+    );
+  }
 }
 
 // pega o id do usuário logado atualmente (ou null, se ninguém estiver logado)

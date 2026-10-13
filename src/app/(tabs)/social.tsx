@@ -1,5 +1,6 @@
 // TELA SOCIAL (gráfico de barras com o progresso dos amigos)
 import { CabecalhoProgresso } from "@/components/cabecalho-progresso";
+import { useTema } from "@/contexts/tema";
 import { Image, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -23,8 +24,13 @@ const ALTURA_MAXIMA = 240;
 const maiorValor = Math.max(...amigos.map((a) => a.pontos));
 
 export default function Social() {
+  const { cores } = useTema();
+
   return (
-    <SafeAreaView style={styles.safe} edges={["top"]}>
+    <SafeAreaView
+      style={[styles.safe, { backgroundColor: cores.fundo }]}
+      edges={["top"]}
+    >
       <CabecalhoProgresso progresso={0.1} />
 
       <View style={styles.grafico}>
@@ -38,14 +44,19 @@ export default function Social() {
                 source={require("../../assets/Icons/user.png")}
                 style={styles.avatar}
               />
-              <View style={[styles.barra, { height: altura }]} />
+              <View
+                style={[
+                  styles.barra,
+                  { height: altura, backgroundColor: cores.destaque },
+                ]}
+              />
             </View>
           );
         })}
       </View>
 
       {/* linha de base do gráfico */}
-      <View style={styles.linhaBase} />
+      <View style={[styles.linhaBase, { backgroundColor: cores.borda }]} />
     </SafeAreaView>
   );
 }
@@ -53,7 +64,6 @@ export default function Social() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   grafico: {
     flexDirection: "row",
@@ -71,16 +81,13 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: "#E8E8E8",
   },
   barra: {
     width: 28,
-    backgroundColor: "#0000CC",
     borderRadius: 10,
   },
   linhaBase: {
     height: 1,
-    backgroundColor: "#000",
     opacity: 0.2,
     marginHorizontal: 30,
   },

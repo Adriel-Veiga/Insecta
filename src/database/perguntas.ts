@@ -143,3 +143,313 @@ export const perguntasAvancado: Pergunta[] = [
     respostaCorreta: 1,
   },
 ];
+
+export const perguntasPorAtividade: Record<number, Pergunta[]> = {
+  1: [
+    {
+      id: 1,
+      enunciado: "Qual componente executa instruções e cálculos no computador?",
+      alternativas: ["Processador (CPU)", "Monitor", "Teclado", "Gabinete"],
+      respostaCorreta: 0,
+    },
+    {
+      id: 2,
+      enunciado: "Para que serve principalmente a memória RAM?",
+      alternativas: [
+        "Guardar arquivos mesmo com o computador desligado",
+        "Armazenar temporariamente dados dos programas em uso",
+        "Exibir imagens na tela",
+        "Conectar o computador à internet",
+      ],
+      respostaCorreta: 1,
+    },
+    {
+      id: 3,
+      enunciado: "Qual peça conecta os principais componentes do computador?",
+      alternativas: ["Placa-mãe", "Caixa de som", "Mouse", "Impressora"],
+      respostaCorreta: 0,
+    },
+    {
+      id: 4,
+      enunciado: "Qual é a função do SSD ou HD?",
+      alternativas: [
+        "Resfriar o processador",
+        "Armazenar arquivos e programas",
+        "Controlar o cursor",
+        "Fornecer energia da tomada",
+      ],
+      respostaCorreta: 1,
+    },
+  ],
+  2: [
+    {
+      id: 1,
+      enunciado: "O que é phishing?",
+      alternativas: [
+        "Uma tentativa de enganar alguém para roubar dados",
+        "Uma cópia de segurança dos arquivos",
+        "Uma atualização do sistema",
+        "Um tipo de conexão sem fio",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 2,
+      enunciado: "Qual senha é mais segura?",
+      alternativas: [
+        "12345678",
+        "A mesma senha usada em todos os sites",
+        "Uma combinação longa e única de palavras, números e símbolos",
+        "Seu nome e ano de nascimento",
+      ],
+      respostaCorreta: 2,
+    },
+    {
+      id: 3,
+      enunciado: "O que a autenticação de dois fatores acrescenta à conta?",
+      alternativas: [
+        "Uma segunda etapa de verificação além da senha",
+        "Uma segunda senha igual à primeira",
+        "Mais espaço para arquivos",
+        "Acesso sem precisar de senha",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 4,
+      enunciado:
+        "Você recebeu um link inesperado pedindo sua senha. O que fazer?",
+      alternativas: [
+        "Abrir o link e preencher os dados",
+        "Encaminhar a mensagem para todos os contatos",
+        "Não abrir e confirmar a solicitação por um canal oficial",
+        "Responder com sua senha para verificar a mensagem",
+      ],
+      respostaCorreta: 2,
+    },
+  ],
+  3: [
+    {
+      id: 1,
+      enunciado: "Qual programa usamos para abrir páginas da internet?",
+      alternativas: [
+        "Navegador",
+        "Calculadora",
+        "Editor de texto",
+        "Explorador de arquivos",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 2,
+      enunciado: "Para que serve um mecanismo de busca?",
+      alternativas: [
+        "Encontrar páginas e informações usando palavras-chave",
+        "Consertar peças do computador",
+        "Criar uma senha para o Wi-Fi",
+        "Apagar o histórico de todos os sites",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 3,
+      enunciado: "O que é o endereço URL de um site?",
+      alternativas: [
+        "O endereço que identifica uma página na web",
+        "A memória temporária do computador",
+        "A senha da conta de email",
+        "Um tipo de arquivo compactado",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 4,
+      enunciado:
+        "Como avaliar melhor se uma informação encontrada é confiável?",
+      alternativas: [
+        "Verificar autoria, data e comparar com outras fontes",
+        "Confiar apenas no título da página",
+        "Compartilhar antes de ler",
+        "Escolher sempre o primeiro resultado",
+      ],
+      respostaCorreta: 0,
+    },
+  ],
+  4: [
+    {
+      id: 1,
+      enunciado: "O que é um sistema operacional?",
+      alternativas: [
+        "O software que administra o computador e seus programas",
+        "Um tipo de cabo de energia",
+        "Um documento de texto",
+        "Uma peça usada para imprimir",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 2,
+      enunciado: "Qual item costuma mostrar aplicativos abertos e atalhos?",
+      alternativas: [
+        "Barra de tarefas",
+        "Lixeira",
+        "Pasta de downloads",
+        "Tela de impressão",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 3,
+      enunciado: "Por que instalar atualizações do sistema operacional?",
+      alternativas: [
+        "Para receber melhorias e correções de segurança",
+        "Para apagar automaticamente todos os documentos",
+        "Para substituir o monitor",
+        "Para desativar os programas instalados",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 4,
+      enunciado: "O que é um aplicativo?",
+      alternativas: [
+        "Um programa que executa uma tarefa no dispositivo",
+        "Uma tomada elétrica",
+        "Um cabo que conecta o monitor",
+        "Um tipo de memória permanente",
+      ],
+      respostaCorreta: 0,
+    },
+  ],
+  5: [
+    {
+      id: 1,
+      enunciado: "Para que serve uma pasta no computador?",
+      alternativas: [
+        "Organizar arquivos relacionados",
+        "Aumentar o brilho da tela",
+        "Conectar à internet",
+        "Proteger o computador contra quedas",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 2,
+      enunciado:
+        "O que normalmente indica a extensão de um arquivo, como .pdf?",
+      alternativas: [
+        "O formato ou tipo do arquivo",
+        "O tamanho da tela",
+        "A senha usada para abrir o computador",
+        "A data em que o computador foi comprado",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 3,
+      enunciado: "O que acontece ao mover um arquivo para outra pasta?",
+      alternativas: [
+        "Ele passa a ficar guardado no novo local",
+        "Ele é enviado automaticamente por email",
+        "Ele vira uma imagem",
+        "Ele é copiado para a internet",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 4,
+      enunciado: "Qual nome facilita encontrar um documento depois?",
+      alternativas: [
+        "Relatorio_vendas_junho",
+        "aaaaa",
+        "Sem título 27",
+        "Documento novo final final",
+      ],
+      respostaCorreta: 0,
+    },
+  ],
+  6: [
+    {
+      id: 1,
+      enunciado: "Qual atitude demonstra respeito em uma conversa online?",
+      alternativas: [
+        "Escrever com clareza e respeito",
+        "Compartilhar mensagens privadas sem permissão",
+        "Enviar a mesma mensagem repetidamente",
+        "Usar letras maiúsculas para gritar",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 2,
+      enunciado: "Antes de enviar um email, o que é importante conferir?",
+      alternativas: [
+        "Destinatário, assunto e anexos",
+        "A cor do computador",
+        "O histórico de navegação de quem recebe",
+        "A senha de todos os destinatários",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 3,
+      enunciado: "O que fazer antes de publicar uma foto de outra pessoa?",
+      alternativas: [
+        "Pedir autorização",
+        "Publicar sem avisar",
+        "Adicionar os dados pessoais dela",
+        "Enviar para desconhecidos",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 4,
+      enunciado:
+        "Qual ferramenta é mais adequada para uma conversa rápida com um colega?",
+      alternativas: [
+        "Um aplicativo de mensagens usado por ambos",
+        "Um site público de avaliações",
+        "Uma postagem visível para todos",
+        "Um arquivo de sistema",
+      ],
+      respostaCorreta: 0,
+    },
+  ],
+  7: [
+    {
+      id: 1,
+      enunciado: "Qual componente executa instruções no computador?",
+      alternativas: ["Processador (CPU)", "Monitor", "Teclado", "Impressora"],
+      respostaCorreta: 0,
+    },
+    {
+      id: 2,
+      enunciado:
+        "Uma mensagem pede sua senha por um link inesperado. Qual é a atitude segura?",
+      alternativas: [
+        "Não abrir e verificar pelo canal oficial",
+        "Preencher a senha rapidamente",
+        "Repassar o link aos contatos",
+        "Enviar também o código de verificação",
+      ],
+      respostaCorreta: 0,
+    },
+    {
+      id: 3,
+      enunciado: "Qual programa permite visitar sites?",
+      alternativas: ["Navegador", "Calculadora", "Bloco de notas", "Lixeira"],
+      respostaCorreta: 0,
+    },
+    {
+      id: 4,
+      enunciado: "Qual é uma boa forma de proteger arquivos importantes?",
+      alternativas: [
+        "Manter uma cópia de segurança",
+        "Usar a mesma senha em todos os sites",
+        "Apagar as atualizações do sistema",
+        "Compartilhar a senha com colegas",
+      ],
+      respostaCorreta: 0,
+    },
+  ],
+};

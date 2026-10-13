@@ -1,5 +1,6 @@
 //TELA DE CONFIRMAÇÃO DE NÍVEL (a tela que aparece depois da escolha do nível, para confirmar a escolha)
 import { getUsuarioLogadoId, salvarNivel } from "@/database/db";
+import { useTema } from "@/contexts/tema";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -33,6 +34,7 @@ const avancar = () => {
 };
 
 export default function NivelConfirmar() {
+  const { cores } = useTema();
   const { nivel, nivelPretendido } = useLocalSearchParams<{
     nivel: keyof typeof conteudoPorNivel;
     nivelPretendido?: string;
@@ -62,29 +64,37 @@ export default function NivelConfirmar() {
   // componentes da tela
   if (!dados) {
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
         <View style={styles.container}>
-          <Text style={styles.titulo}>Nível não encontrado</Text>
-          <Link href="/nivel">Voltar</Link>
+          <Text style={[styles.titulo, { color: cores.destaque }]}>
+            Nível não encontrado
+          </Text>
+          <Link href="/nivel" style={{ color: cores.destaque }}>
+            Voltar
+          </Link>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <View style={styles.container}>
-        <View style={styles.card}>
+        <View style={[styles.card, { backgroundColor: cores.superficieSuave }]}>
           <View style={styles.cardHeader}>
             <Image source={dados.icone} style={styles.icone} />
-            <Text style={styles.tituloCard}>{dados.titulo}</Text>
+            <Text style={[styles.tituloCard, { color: cores.destaque }]}>
+              {dados.titulo}
+            </Text>
           </View>
-          <Text style={styles.texto}>{dados.texto}</Text>
+          <Text style={[styles.texto, { color: cores.texto }]}>
+            {dados.texto}
+          </Text>
         </View>
 
         {foiRebaixado && (
           <View style={styles.cardAviso}>
-            <Text style={styles.textoAviso}>
+            <Text style={[styles.textoAviso, { color: cores.texto }]}>
               Você ficou pertinho! Que tal tentar de novo?
             </Text>
           </View>
@@ -98,9 +108,12 @@ export default function NivelConfirmar() {
             style={styles.botaoSecundario}
           />
         ) : (
-          <Text style={styles.footerText}>
+          <Text style={[styles.footerText, { color: cores.textoSecundario }]}>
             Quer tentar outro nível?{" "}
-            <Link href="/nivel" style={styles.footerLink}>
+            <Link
+              href="/nivel"
+              style={[styles.footerLink, { color: cores.destaque }]}
+            >
               Escolher de novo
             </Link>
           </Text>

@@ -1,13 +1,22 @@
 // PÁGINA INICIAL DO APP (lista de atividades, progresso e configurações)
 import { AppModal } from "@/components/app-modal";
 import { CirculoProgresso } from "@/components/circulo-progresso";
-import { router } from "expo-router";
-import { useState } from "react";
+import { useTema } from "@/contexts/tema";
 import {
+  atividadeDesbloqueada,
+  calcularProgressoGeral,
+  carregarProgressoAtividades,
+  type ProgressoAtividades,
+} from "@/database/progresso-atividades";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import {
+  Alert,
   Image,
   Modal,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TouchableOpacity,
   View,
@@ -19,90 +28,95 @@ type Atividade = {
   id: number;
   titulo: string;
   descricao: string;
-  progresso: number; // 0 a 100
-  bloqueado: boolean;
   cor: string;
 };
 
-// LISTA DE ATIVIDADES (dados fixos do catálogo de tarefas do app)
 const atividades: Atividade[] = [
   {
     id: 1,
     titulo: "Atividade 1",
     descricao:
       "Nessa atividade você vai aprender os conceitos básicos de hardware, identificando as principais peças de um computador.",
-    progresso: 40,
-    bloqueado: false,
     cor: "#5B5FEF",
   },
   {
     id: 2,
     titulo: "Atividade 2",
-    descricao: "Descrição da atividade 2...",
-    progresso: 0,
-    bloqueado: false,
+    descricao:
+      "Aprenda a proteger seus dados e reconhecer riscos no ambiente digital.",
     cor: "#3730A3",
   },
   {
     id: 3,
     titulo: "Atividade 3",
-    descricao: "Descrição da atividade 3...",
-    progresso: 0,
-    bloqueado: false,
+    descricao:
+      "Conheça a internet, os navegadores e como encontrar informações confiáveis.",
     cor: "#5B5FEF",
   },
   {
     id: 4,
     titulo: "Atividade 4",
-    descricao: "Descrição da atividade 4...",
-    progresso: 0,
-    bloqueado: true,
-    cor: "#7B7FA6",
+    descricao:
+      "Explore os sistemas operacionais e aprenda a navegar pelo computador.",
+    cor: "#3730A3",
   },
   {
     id: 5,
     titulo: "Atividade 5",
-    descricao: "Descrição da atividade 5...",
-    progresso: 0,
-    bloqueado: true,
-    cor: "#A5A8DB",
+    descricao:
+      "Organize arquivos e pastas para manter seus documentos fáceis de encontrar.",
+    cor: "#5B5FEF",
   },
   {
     id: 6,
     titulo: "Atividade 6",
-    descricao: "Descrição da atividade 6...",
-    progresso: 0,
-    bloqueado: true,
-    cor: "#7B7FA6",
+    descricao:
+      "Use ferramentas digitais para se comunicar com clareza e responsabilidade.",
+    cor: "#3730A3",
   },
   {
     id: 7,
     titulo: "Atividade 7",
-    descricao: "Descrição da atividade 7...",
-    progresso: 0,
-    bloqueado: true,
-    cor: "#A5A8DB",
+    descricao:
+      "Reúna o que aprendeu em um desafio final de informática básica.",
+    cor: "#5B5FEF",
   },
 ];
-
-// PROGRESSO GERAL (conta quantas atividades já estão liberadas)
-const concluidas = atividades.filter((a) => !a.bloqueado).length;
-const progressoGeral = concluidas / atividades.length;
 
 // PÁGINA INICIAL
 export default function IndexPage() {
   const [selecionada, setSelecionada] = useState<Atividade | null>(null);
   const [configuracoesAberta, setConfiguracoesAberta] = useState(false);
+  const [progressoAtividades, setProgressoAtividades] =
+    useState<ProgressoAtividades>({});
+  const { escuro, cores, definirTemaEscuro } = useTema();
 
-  // FUNÇÃO PARA ABRIR DETALHES (bloqueia itens fechados)
+  useFocusEffect(
+    useCallback(() => {
+      let ativa = true;
+      carregarProgressoAtividades()
+        .then((progresso) => {
+          if (ativa) setProgressoAtividades(progresso);
+        })
+        .catch(() => {
+          if (ativa) setProgressoAtividades({});
+        });
+      return () => {
+        ativa = false;
+      };
+    }, []),
+  );
+
+  const progressoGeral = calcularProgressoGeral(progressoAtividades);
+
   function abrirDetalhes(atividade: Atividade) {
-    if (atividade.bloqueado) return;
+    if (!atividadeDesbloqueada(atividade.id, progressoAtividades)) return;
     setSelecionada(atividade);
   }
 
-  // FUNÇÃO PARA INICIAR A ATIVIDADE (leva para a rota dinâmica do item selecionado)
   function iniciarAtividade() {
     if (!selecionada) return;
+
     const id = selecionada.id;
     setSelecionada(null);
     router.push({ pathname: "/atividade/[id]", params: { id: String(id) } });
@@ -114,22 +128,27 @@ export default function IndexPage() {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       {/* CABEÇALHO: progresso + notificações */}
       <View style={styles.header}>
-        <View style={styles.trilhoProgresso}>
+        <View
+          style={[styles.trilhoProgresso, { backgroundColor: cores.trilho }]}
+        >
           <View
             style={[
               styles.preenchimentoProgresso,
-              { width: `${progressoGeral * 100}%` },
+              {
+                width: `${progressoGeral * 100}%`,
+                backgroundColor: cores.destaque,
+              },
             ]}
           />
         </View>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/notificacoes")}>
           <Image
             source={require("../../assets/Icons/bell.png")}
-            style={styles.sino}
+            style={[styles.sino, { tintColor: cores.destaque }]}
           />
         </TouchableOpacity>
       </View>
@@ -157,21 +176,24 @@ export default function IndexPage() {
             style={[
               styles.pill,
               { backgroundColor: atividade.cor },
-              atividade.bloqueado && styles.pillBloqueada,
+              !atividadeDesbloqueada(atividade.id, progressoAtividades) &&
+                styles.pillBloqueada,
             ]}
             onPress={() => abrirDetalhes(atividade)}
-            disabled={atividade.bloqueado}
+            disabled={!atividadeDesbloqueada(atividade.id, progressoAtividades)}
             activeOpacity={0.8}
           >
             <Text style={styles.pillTexto}>{atividade.titulo}</Text>
 
-            {atividade.bloqueado ? (
+            {!atividadeDesbloqueada(atividade.id, progressoAtividades) ? (
               <Image
                 source={require("../../assets/Icons/lock.png")}
                 style={styles.cadeadoIcone}
               />
             ) : (
-              <CirculoProgresso porcentagem={atividade.progresso} />
+              <CirculoProgresso
+                porcentagem={progressoAtividades[atividade.id] ?? 0}
+              />
             )}
           </TouchableOpacity>
         ))}
@@ -179,8 +201,12 @@ export default function IndexPage() {
 
       {/* MODAL DE DESCRIÇÃO — aparece quando "selecionada" não é null */}
       <AppModal visible={!!selecionada} onClose={() => setSelecionada(null)}>
-        <Text style={styles.modalTitulo}>{selecionada?.titulo}</Text>
-        <Text style={styles.modalDescricao}>{selecionada?.descricao}</Text>
+        <Text style={[styles.modalTitulo, { color: cores.destaque }]}>
+          {selecionada?.titulo}
+        </Text>
+        <Text style={[styles.modalDescricao, { color: cores.texto }]}>
+          {selecionada?.descricao}
+        </Text>
         <TouchableOpacity style={styles.modalBotao} onPress={iniciarAtividade}>
           <Text style={styles.startTexto}>Começar</Text>
         </TouchableOpacity>
@@ -200,28 +226,106 @@ export default function IndexPage() {
             onPress={() => setConfiguracoesAberta(false)}
           />
 
-          <View style={styles.drawerPanel}>
+          <View
+            style={[styles.drawerPanel, { backgroundColor: cores.superficie }]}
+          >
             <View style={styles.drawerHeader}>
-              <Text style={styles.drawerTitulo}>Configurações</Text>
+              <Text style={[styles.drawerTitulo, { color: cores.destaque }]}>
+                Configurações
+              </Text>
               <TouchableOpacity onPress={() => setConfiguracoesAberta(false)}>
-                <Text style={styles.drawerClose}>✕</Text>
+                <Text style={[styles.drawerClose, { color: cores.destaque }]}>
+                  ✕
+                </Text>
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.configItem}>
-              <Text style={styles.configTexto}>Notificações</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.configItem}>
-              <Text style={styles.configTexto}>Privacidade</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.configItem}>
-              <Text style={styles.configTexto}>Sobre o app</Text>
+            <TouchableOpacity
+              style={[
+                styles.configItem,
+                { backgroundColor: cores.superficieSuave },
+              ]}
+              onPress={() => {
+                setConfiguracoesAberta(false);
+                router.push("/notificacoes");
+              }}
+            >
+              <Text style={[styles.configTexto, { color: cores.texto }]}>
+                Notificações
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.modalBotao}
+              style={[
+                styles.configItem,
+                { backgroundColor: cores.superficieSuave },
+              ]}
+              onPress={() => {
+                setConfiguracoesAberta(false);
+                router.push("/sobre");
+              }}
+            >
+              <Text style={[styles.configTexto, { color: cores.texto }]}>
+                Sobre o app
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.configItem,
+                { backgroundColor: cores.superficieSuave },
+              ]}
+              onPress={() => {
+                setConfiguracoesAberta(false);
+                router.push("/feedback");
+              }}
+            >
+              <Text style={[styles.configTexto, { color: cores.texto }]}>
+                Feedback
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.configItem,
+                { backgroundColor: cores.superficieSuave },
+              ]}
+              onPress={() => {
+                setConfiguracoesAberta(false);
+                router.push("/ajuda");
+              }}
+            >
+              <Text style={[styles.configTexto, { color: cores.texto }]}>
+                Ajuda
+              </Text>
+            </TouchableOpacity>
+
+            <View
+              style={[
+                styles.configItem,
+                styles.temaItem,
+                { backgroundColor: cores.superficieSuave },
+              ]}
+            >
+              <Text style={[styles.configTexto, { color: cores.texto }]}>
+                Tema escuro
+              </Text>
+              <Switch
+                value={escuro}
+                onValueChange={(valor) => {
+                  void definirTemaEscuro(valor).catch(() => {
+                    Alert.alert(
+                      "Erro",
+                      "Não foi possível salvar a preferência de tema.",
+                    );
+                  });
+                }}
+                trackColor={{ false: cores.borda, true: cores.destaque }}
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.modalBotao, { backgroundColor: cores.destaque }]}
               onPress={() => setConfiguracoesAberta(false)}
             >
               <Text style={styles.startTexto}>Fechar</Text>
@@ -382,7 +486,7 @@ const styles = StyleSheet.create({
   },
 
   drawerClose: {
-    color: "#2400FF",
+    color: "#FFF",
     fontSize: 24,
     fontWeight: "700",
   },

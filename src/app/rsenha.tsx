@@ -1,5 +1,6 @@
 //TELA DE RECUPERAÇÃO DE SENHA (a tela onde o usuário digita a nova senha)
 import { buscarUsuarioPorEmail, redefinirSenha } from "@/database/db";
+import { useTema } from "@/contexts/tema";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
@@ -20,6 +21,7 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 
 export default function RecuperarSenha() {
+  const { cores } = useTema();
   // recupera o email que veio da tela anterior (remail.tsx)
   const { email } = useLocalSearchParams<{ email: string }>();
 
@@ -82,7 +84,7 @@ export default function RecuperarSenha() {
   };
   // componentes da tela
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.select({ ios: "padding", android: "height" })}
@@ -92,15 +94,19 @@ export default function RecuperarSenha() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.header}>
-            <Text style={styles.title}>Digite sua nova senha</Text>
+            <Text style={[styles.title, { color: cores.destaque }]}>
+              Digite sua nova senha
+            </Text>
           </View>
 
-          <Text style={styles.subtitle}>
+          <Text style={[styles.subtitle, { color: cores.textoSecundario }]}>
             Verificamos o seu email, crie uma nova senha
           </Text>
 
           <View style={styles.form}>
-            <Text style={styles.label}>Senha:</Text>
+            <Text style={[styles.label, { color: cores.textoSecundario }]}>
+              Senha:
+            </Text>
             <View style={styles.inputWithIcon}>
               <Input
                 placeholder="#Exemplo123"
@@ -124,7 +130,9 @@ export default function RecuperarSenha() {
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.label}>Confirmar senha:</Text>
+            <Text style={[styles.label, { color: cores.textoSecundario }]}>
+              Confirmar senha:
+            </Text>
             <View style={styles.inputWithIcon}>
               <Input
                 placeholder="#Exemplo123"
@@ -159,7 +167,6 @@ export default function RecuperarSenha() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#ffffff",
   },
   scrollContent: {
     flexGrow: 1,
@@ -170,14 +177,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
-    color: "#2400FF",
     fontSize: 28,
     fontFamily: "Baloo2_700Bold",
     opacity: 0.9,
     marginLeft: 7,
   },
   subtitle: {
-    color: "#2400FF",
     fontSize: 20,
     marginBottom: 24,
     fontFamily: "Baloo2_400Regular",
@@ -188,7 +193,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   label: {
-    color: "#535356",
     fontSize: 14,
     fontFamily: "600",
     opacity: 0.8,

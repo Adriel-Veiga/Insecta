@@ -1,5 +1,6 @@
 // este componente é um modal genérico que pode ser usado em qualquer parte do app
 import type { ReactNode } from "react";
+import { useTema } from "@/contexts/tema";
 import { Modal, StyleSheet, View } from "react-native";
 
 // esta type define a estrutura mínima que o modal precisa receber: visibilidade,
@@ -12,6 +13,8 @@ type AppModalProps = {
 };
 
 export function AppModal({ visible, onClose, children }: AppModalProps) {
+  const { cores } = useTema();
+
   return (
     <Modal
       visible={visible}
@@ -20,7 +23,9 @@ export function AppModal({ visible, onClose, children }: AppModalProps) {
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.card}>{children}</View>
+        <View style={[styles.card, { backgroundColor: cores.superficie }]}>
+          {children}
+        </View>
       </View>
     </Modal>
   );
@@ -34,7 +39,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
-    backgroundColor: "#1B1B1B",
     borderRadius: 20,
     padding: 24,
     width: "85%",

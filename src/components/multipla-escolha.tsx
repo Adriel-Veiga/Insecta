@@ -1,6 +1,7 @@
 // TELA DE PERGUNTA DE MÚLTIPLA ESCOLHA (a tela onde o usuário responde a pergunta de múltipla escolha)
 import { Button } from "@/components/button";
 import { Pergunta } from "@/database/perguntas";
+import { useTema } from "@/contexts/tema";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -15,6 +16,7 @@ export function MultiplaEscolha({
   onResponder,
   isLast,
 }: MultiplaEscolhaProps) {
+  const { cores, escuro } = useTema();
   const [selecionado, setSelecionado] = useState<number | null>(null);
   const [respondido, setRespondido] = useState(false);
 
@@ -39,7 +41,9 @@ export function MultiplaEscolha({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.enunciado}>{pergunta.enunciado}</Text>
+      <Text style={[styles.enunciado, { color: cores.destaque }]}>
+        {pergunta.enunciado}
+      </Text>
 
       {pergunta.alternativas.map((alternativa, indice) => {
         const marcado = respondido && selecionado === indice;
@@ -50,7 +54,7 @@ export function MultiplaEscolha({
             ? acertou
               ? "#E6F9EA"
               : "#FFECEC"
-            : "#F2F2F2",
+            : cores.superficieSuave,
           borderColor: marcado
             ? acertou
               ? "#008000"
@@ -60,7 +64,15 @@ export function MultiplaEscolha({
         } as const;
 
         const textoStyle = {
-          color: marcado ? (acertou ? "#006400" : "#CC0000") : "#2400FF",
+          color: marcado
+            ? acertou
+              ? escuro
+                ? "#85D99A"
+                : "#006400"
+              : escuro
+                ? "#FF9292"
+                : "#CC0000"
+            : cores.destaque,
         } as const;
 
         return (

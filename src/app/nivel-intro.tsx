@@ -1,23 +1,27 @@
 // TELA DE INTRODUÇÃO AO NÍVEL (a tela que aparece antes da escolha do nível)
 import { router } from "expo-router";
+import { useTema } from "@/contexts/tema";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/button";
 
 export default function NivelIntro() {
+  const { cores } = useTema();
   const avancar = () => {
     router.push("/nivel");
   };
   // componentes da tela
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <View style={styles.container}>
         <Image
           source={require("../assets/Joana/JoanaU3.png")}
           style={styles.image}
         />
-        <Text style={styles.title}>Vamos descobrir seu nível!</Text>
+        <Text style={[styles.title, { color: cores.destaque }]}>
+          Vamos descobrir seu nível!
+        </Text>
         <Button label="Avançar" onPress={avancar} />
       </View>
     </SafeAreaView>

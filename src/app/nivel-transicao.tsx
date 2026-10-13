@@ -1,11 +1,13 @@
 // TELA DE TRANSIÇÃO (mensagem de introdução antes do usuário começar a responder as perguntas)
 import { router, useLocalSearchParams } from "expo-router";
+import { useTema } from "@/contexts/tema";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/button";
 
 export default function NivelTransicao() {
+  const { cores } = useTema();
   const { nivelPretendido } = useLocalSearchParams<{
     nivelPretendido: "intermediario" | "avancado";
   }>();
@@ -18,10 +20,12 @@ export default function NivelTransicao() {
   };
   // componentes da tela
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <View style={styles.container}>
-        <Text style={styles.title}>Hora de provar seu nível!</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: cores.destaque }]}>
+          Hora de provar seu nível!
+        </Text>
+        <Text style={[styles.subtitle, { color: cores.textoSecundario }]}>
           Responda algumas perguntas, só para confirmar seu nível:{" "}
           {nivelPretendido === "avancado" ? "avançado" : "intermediário"}. Se
           não for, sem problema, a gente ajusta seu nível.

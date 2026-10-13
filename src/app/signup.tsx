@@ -1,5 +1,6 @@
 //TELA DE CADASTRO (a tela onde o usuário cria uma conta)
 import { db } from "@/database/db";
+import { useTema } from "@/contexts/tema";
 import * as Crypto from "expo-crypto";
 import { Link, router } from "expo-router";
 import { useState } from "react";
@@ -20,6 +21,7 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 
 export default function Cadastro() {
+  const { cores } = useTema();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -78,7 +80,7 @@ export default function Cadastro() {
   };
   // componentes da tela
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.select({ ios: "padding", android: "height" })}
@@ -88,15 +90,19 @@ export default function Cadastro() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.header}>
-            <Text style={styles.title}>Cadastre-se!</Text>
+            <Text style={[styles.title, { color: cores.destaque }]}>
+              Cadastre-se!
+            </Text>
           </View>
 
-          <Text style={styles.subtitle}>
+          <Text style={[styles.subtitle, { color: cores.textoSecundario }]}>
             Crie uma conta para começar a aprender!
           </Text>
 
           <View style={styles.form}>
-            <Text style={styles.label}>Nome:</Text>
+            <Text style={[styles.label, { color: cores.textoSecundario }]}>
+              Nome:
+            </Text>
             <Input
               placeholder="Seu nome"
               placeholderTextColor="#B0B0B8"
@@ -104,7 +110,9 @@ export default function Cadastro() {
               onChangeText={setNome}
             />
 
-            <Text style={styles.label}>Email:</Text>
+            <Text style={[styles.label, { color: cores.textoSecundario }]}>
+              Email:
+            </Text>
             <Input
               placeholder="seuemail@exemplo.com"
               placeholderTextColor="#B0B0B8"
@@ -114,7 +122,9 @@ export default function Cadastro() {
               onChangeText={setEmail}
             />
 
-            <Text style={styles.label}>Senha:</Text>
+            <Text style={[styles.label, { color: cores.textoSecundario }]}>
+              Senha:
+            </Text>
             <View style={styles.inputWithIcon}>
               <Input
                 placeholder="#Exemplo123"
@@ -138,7 +148,9 @@ export default function Cadastro() {
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.label}>Confirmar senha:</Text>
+            <Text style={[styles.label, { color: cores.textoSecundario }]}>
+              Confirmar senha:
+            </Text>
             <View style={styles.inputWithIcon}>
               <Input
                 placeholder="#Exemplo123"
@@ -165,9 +177,12 @@ export default function Cadastro() {
             <Button label="Cadastrar" onPress={cadastrar} />
           </View>
 
-          <Text style={styles.footerText}>
+          <Text style={[styles.footerText, { color: cores.textoSecundario }]}>
             Já tem uma conta?{" "}
-            <Link href="/login" style={styles.footerLink}>
+            <Link
+              href="/login"
+              style={[styles.footerLink, { color: cores.destaque }]}
+            >
               Clique aqui!
             </Link>
           </Text>
@@ -180,7 +195,6 @@ export default function Cadastro() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#ffffff",
   },
 
   scrollContent: {
@@ -194,14 +208,12 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    color: "#2400FF",
     fontSize: 28,
     fontFamily: "Baloo2_700Bold",
     opacity: 0.9,
   },
 
   subtitle: {
-    color: "#2400FF",
     fontSize: 20,
     marginBottom: 24,
     fontFamily: "Baloo2_400Regular",
@@ -213,7 +225,6 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    color: "#535356",
     fontSize: 14,
     fontFamily: "600",
     opacity: 0.8,
@@ -241,12 +252,10 @@ const styles = StyleSheet.create({
   },
 
   footerText: {
-    color: "#A0A0A8",
     textAlign: "center",
   },
 
   footerLink: {
-    color: "#0002CC",
     fontWeight: "700",
   },
 });
