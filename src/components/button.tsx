@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
+import { useTema } from "@/contexts/tema";
 
 // o botão reutiliza as props do TouchableOpacity para aceitar eventos e estilos sem precisar
 // criar uma API própria para cada tela, deixando o uso mais simples
@@ -12,10 +13,16 @@ type ButtonProps = TouchableOpacityProps & {
   label: string;
 };
 
-export function Button({ label, ...rest }: ButtonProps) {
+export function Button({ label, style, ...rest }: ButtonProps) {
+  const { cores } = useTema();
+
   return (
-    <TouchableOpacity style={styles.container} activeOpacity={0.7} {...rest}>
-      <Text style={styles.label}>{label}</Text>
+    <TouchableOpacity
+      style={[styles.container, { backgroundColor: cores.destaque }, style]}
+      activeOpacity={0.7}
+      {...rest}
+    >
+      <Text style={[styles.label, { color: cores.textoBotao }]}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -25,11 +32,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 48,
     borderRadius: 30,
-    backgroundColor: "#0002CC",
   },
 
   label: {
-    color: "#FFFFFF",
     fontSize: 16,
     fontFamily: "Baloo2_700Bold",
     fontWeight: 600,

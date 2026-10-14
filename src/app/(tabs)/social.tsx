@@ -1,73 +1,94 @@
-//TELA DE SOCIAL {EM MANUTENÇÂO} (a tela onde o usuário vê os amigos e interage com eles)
-//TELA DE PERFIL {EM MANUTENÇÂO} (a tela onde o usuário vê seu perfil, conquistas e amigos)
-import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+// TELA SOCIAL (gráfico de barras com o progresso dos amigos)
+import { CabecalhoProgresso } from "@/components/cabecalho-progresso";
+import { useTema } from "@/contexts/tema";
+import { Image, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function User() {
-  // componentes da tela
+// TIPO DO AMIGO NO RANKING
+type Amigo = {
+  id: number;
+  pontos: number;
+};
+
+const amigos: Amigo[] = [
+  { id: 1, pontos: 30 },
+  { id: 2, pontos: 80 },
+  { id: 3, pontos: 100 },
+  { id: 4, pontos: 45 },
+  { id: 5, pontos: 72 },
+  { id: 6, pontos: 90 },
+];
+
+// altura máxima que a maior barra pode ter, em pixels
+const ALTURA_MAXIMA = 240;
+const maiorValor = Math.max(...amigos.map((a) => a.pontos));
+
+export default function Social() {
+  const { cores } = useTema();
+
   return (
-    <SafeAreaView style={styles.safe}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.select({ ios: "padding", android: "height" })}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.content}>
-            <Text style={styles.title}>EM MANUTENÇÃO</Text>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+    <SafeAreaView
+      style={[styles.safe, { backgroundColor: cores.fundo }]}
+      edges={["top"]}
+    >
+      <CabecalhoProgresso progresso={0.1} />
+
+      <View style={styles.grafico}>
+        {amigos.map((amigo) => {
+          // proporção da barra em relação à maior de todas
+          const altura = (amigo.pontos / maiorValor) * ALTURA_MAXIMA;
+
+          return (
+            <View key={amigo.id} style={styles.coluna}>
+              <Image
+                source={require("../../assets/Icons/user.png")}
+                style={styles.avatar}
+              />
+              <View
+                style={[
+                  styles.barra,
+                  { height: altura, backgroundColor: cores.destaque },
+                ]}
+              />
+            </View>
+          );
+        })}
+      </View>
+
+      {/* linha de base do gráfico */}
+      <View style={[styles.linhaBase, { backgroundColor: cores.borda }]} />
     </SafeAreaView>
   );
 }
-// css da tela
+
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#ffffff",
   },
-
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-    padding: 24,
+  grafico: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    height: 320,
+    marginTop: 30,
+    marginHorizontal: 30,
   },
-
-  content: {
+  coluna: {
     alignItems: "center",
+    gap: 6,
   },
-
-  image: {
-    width: 250,
-    height: 250,
-    marginTop: 10,
-    marginBottom: 16,
+  avatar: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
   },
-
-  title: {
-    color: "#243AA9",
-    fontFamily: "Baloo2_700Bold",
-    fontSize: 30,
-    opacity: 0.9,
+  barra: {
+    width: 28,
+    borderRadius: 10,
   },
-
-  subtitle: {
-    color: "#243AA9",
-    fontFamily: "Baloo2_400Regular",
-    fontSize: 20,
-    opacity: 0.6,
-    marginBottom: 24,
-    marginRight: 50,
-    marginLeft: 20,
+  linhaBase: {
+    height: 1,
+    opacity: 0.2,
+    marginHorizontal: 30,
   },
 });

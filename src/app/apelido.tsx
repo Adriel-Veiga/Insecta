@@ -1,5 +1,6 @@
 //TELA DE APELIDO (obviamente a tela que pergunta o apelido do usuário)
 import { getUsuarioLogadoId, salvarApelido } from "@/database/db";
+import { useTema } from "@/contexts/tema";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -19,6 +20,7 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 
 export default function IndexPage() {
+  const { cores } = useTema();
   const [id_usuario, setApelido] = useState("");
 
   // salva o apelido no banco de dados e no AsyncStorage, e navega para a tela de usuário
@@ -45,7 +47,7 @@ export default function IndexPage() {
   }
   // componentes da tela
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.select({ ios: "padding", android: "height" })}
@@ -59,8 +61,12 @@ export default function IndexPage() {
             style={styles.image}
           />
           <View style={styles.container}>
-            <Text style={styles.title}>Como podemos te chamar?</Text>
-            <Text style={styles.label}>Apelido:</Text>
+            <Text style={[styles.title, { color: cores.destaque }]}>
+              Como podemos te chamar?
+            </Text>
+            <Text style={[styles.label, { color: cores.textoSecundario }]}>
+              Apelido:
+            </Text>
             <Input
               placeholder="Seu apelido"
               placeholderTextColor="#B0B0B8"
@@ -79,7 +85,6 @@ export default function IndexPage() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#ffffff",
   },
 
   scrollContent: {
@@ -103,7 +108,6 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    color: "#2400FF",
     fontSize: 28,
     fontFamily: "Baloo2_700Bold",
     opacity: 0.9,
@@ -111,7 +115,6 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    color: "#535356",
     fontSize: 14,
     fontFamily: "600",
     opacity: 0.8,

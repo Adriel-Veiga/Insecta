@@ -1,26 +1,28 @@
 // TELA FINAL DE ATIVIDADE (mensagem de falha, caso o usuário não tenha atingido a nota mínima)
 import { router } from "expo-router";
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/button";
+import { useTema } from "@/contexts/tema";
 
 export default function Intro() {
+  const { cores } = useTema();
   // função para avançar para a tela de login
   const voltar = () => {
     router.push("/nivel");
   };
   // componentes da tela
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.select({ ios: "padding", android: "height" })}
@@ -34,8 +36,10 @@ export default function Intro() {
               source={require("../assets/Joana/JoanaBm.gif")}
               style={styles.image}
             />
-            <Text style={styles.title}>Caramba!</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: cores.destaque }]}>
+              Caramba!
+            </Text>
+            <Text style={[styles.subtitle, { color: cores.textoSecundario }]}>
               É, você não deveria estar aqui ainda. Mas tudo bem, vamos te levar
               de volta para a tela de escolha de nível.
             </Text>

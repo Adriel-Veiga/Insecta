@@ -1,5 +1,6 @@
 // TELA DE INTRODUÇÃO (primeira tela de fato que o usuário vê ao abrir o app)
 import { router } from "expo-router";
+import { useTema } from "@/contexts/tema";
 import {
   Image,
   KeyboardAvoidingView,
@@ -14,13 +15,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/button";
 
 export default function Intro() {
+  const { cores } = useTema();
   // função para avançar para a tela de login
   const avancar = () => {
     router.push("/login");
   };
   // componentes da tela
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.select({ ios: "padding", android: "height" })}
@@ -34,8 +36,8 @@ export default function Intro() {
               source={require("../assets/Joana/JoanaBm.gif")}
               style={styles.image}
             />
-            <Text style={styles.title}>Olá!</Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.title, { color: cores.destaque }]}>Olá!</Text>
+            <Text style={[styles.subtitle, { color: cores.textoSecundario }]}>
               Bem vindo ao insecta! Seu novo app para aprender
             </Text>
             <Button label="Avançar" onPress={avancar} />
@@ -49,7 +51,6 @@ export default function Intro() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#ffffff",
   },
 
   scrollContent: {
@@ -70,7 +71,6 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    color: "#243AA9",
     fontFamily: "Baloo2_700Bold",
     fontSize: 30,
     opacity: 0.9,
@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
   },
 
   subtitle: {
-    color: "#243AA9",
     fontFamily: "Baloo2_400Regular",
     fontSize: 20,
     opacity: 0.6,

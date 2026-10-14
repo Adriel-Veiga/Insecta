@@ -1,4 +1,5 @@
 //EXTREMAMENTE IMPORTANTE: ESTE ARQUIVO É RESPONSÁVEL POR INICIAR O BANCO DE DADOS E MUDAR O LAYOUT DE TODAS AS TELAS
+import { TemaProvider } from "@/contexts/tema";
 import { iniciarBanco } from "@/database/db";
 import { Baloo2_400Regular, Baloo2_700Bold } from "@expo-google-fonts/baloo-2";
 import {
@@ -22,5 +23,9 @@ export default function Layout() {
     return null;
   }
   //retorna a navegação com as telas do app
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <TemaProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </TemaProvider>
+  );
 }

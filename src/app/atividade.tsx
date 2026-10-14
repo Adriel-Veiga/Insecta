@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/button";
 import { MultiplaEscolha } from "@/components/multipla-escolha";
+import { useTema } from "@/contexts/tema";
 import { getUsuarioLogadoId, salvarNivel } from "@/database/db";
 import {
   perguntasAvancado,
@@ -22,6 +23,7 @@ const nivelInferior = {
 } as const;
 
 export default function Atividade() {
+  const { cores } = useTema();
   const { nivelPretendido } = useLocalSearchParams<{
     nivelPretendido: "intermediario" | "avancado";
   }>();
@@ -63,16 +65,20 @@ export default function Atividade() {
   };
   // componentes da tela
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <View style={styles.container}>
         {resultado === "passou" ? (
           <View style={{ gap: 12 }}>
             <Text
-              style={{ color: "#2400FF", fontSize: 20, textAlign: "center" }}
+              style={{
+                color: cores.destaque,
+                fontSize: 20,
+                textAlign: "center",
+              }}
             >
               Parabéns você foi aprovado!
             </Text>
-            <Text style={{ color: "#A0A0A8", textAlign: "center" }}>
+            <Text style={{ color: cores.textoSecundario, textAlign: "center" }}>
               Toque abaixo para ir para seu perfil.
             </Text>
             <View style={{ marginTop: 8 }}>
@@ -94,7 +100,7 @@ export default function Atividade() {
           </View>
         ) : (
           <>
-            <Text style={styles.progresso}>
+            <Text style={[styles.progresso, { color: cores.textoSecundario }]}>
               Pergunta {indiceAtual + 1} de {perguntas.length}
             </Text>
 
