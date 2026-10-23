@@ -39,6 +39,14 @@
       ],
       "expo-font",
       "expo-image",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Permita o acesso às fotos para escolher sua foto de perfil.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
       "expo-web-browser",
       "expo-sqlite",
       "expo-status-bar"
