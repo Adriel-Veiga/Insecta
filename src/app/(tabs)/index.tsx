@@ -1,7 +1,9 @@
 // PÁGINA INICIAL DO APP (lista de atividades, progresso e configurações)
 import { AppModal } from "@/components/app-modal";
+import { CabecalhoProgresso } from "@/components/cabecalho-progresso";
 import { CirculoProgresso } from "@/components/circulo-progresso";
 import { useTema } from "@/contexts/tema";
+import { carregarNivelUsuario } from "@/database/db";
 import {
   atividadeDesbloqueada,
   calcularProgressoGeral,
@@ -89,17 +91,22 @@ export default function IndexPage() {
   const [configuracoesAberta, setConfiguracoesAberta] = useState(false);
   const [progressoAtividades, setProgressoAtividades] =
     useState<ProgressoAtividades>({});
+  const [nivelUsuario, setNivelUsuario] = useState<string | null>(null);
   const { escuro, cores, definirTemaEscuro } = useTema();
 
   useFocusEffect(
     useCallback(() => {
       let ativa = true;
-      carregarProgressoAtividades()
-        .then((progresso) => {
-          if (ativa) setProgressoAtividades(progresso);
+      Promise.all([carregarProgressoAtividades(), carregarNivelUsuario()])
+        .then(([progresso, nivel]) => {
+          if (!ativa) return;
+          setProgressoAtividades(progresso);
+          setNivelUsuario(nivel);
         })
         .catch(() => {
-          if (ativa) setProgressoAtividades({});
+          if (!ativa) return;
+          setProgressoAtividades({});
+          setNivelUsuario(null);
         });
       return () => {
         ativa = false;
@@ -129,29 +136,29 @@ export default function IndexPage() {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
-      {/* CABEÇALHO: progresso + notificações */}
-      <View style={styles.header}>
-        <View
-          style={[styles.trilhoProgresso, { backgroundColor: cores.trilho }]}
-        >
-          <View
-            style={[
-              styles.preenchimentoProgresso,
-              {
-                width: `${progressoGeral * 100}%`,
-                backgroundColor: cores.destaque,
-              },
-            ]}
-          />
-        </View>
-
-        <TouchableOpacity onPress={() => router.push("/notificacoes")}>
-          <Image
-            source={require("../../assets/Icons/bell.png")}
-            style={[styles.sino, { tintColor: cores.destaque }]}
-          />
-        </TouchableOpacity>
-      </View>
+      <CabecalhoProgresso
+        progresso={progressoGeral}
+        nivel={nivelUsuario}
+        acaoDireita={
+          <TouchableOpacity
+            onPress={() => router.push("/notificacoes")}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="Notificações"
+            style={{
+              width: 42,
+              height: 42,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Image
+              source={require("../../assets/Icons/bell.png")}
+              style={{ width: 26, height: 26, tintColor: cores.destaque }}
+            />
+          </TouchableOpacity>
+        }
+      />
 
       {/* BOTÃO DE MENU (abre o painel lateral de configurações) */}
       <TouchableOpacity
@@ -239,21 +246,6 @@ export default function IndexPage() {
                 </Text>
               </TouchableOpacity>
             </View>
-
-            <TouchableOpacity
-              style={[
-                styles.configItem,
-                { backgroundColor: cores.superficieSuave },
-              ]}
-              onPress={() => {
-                setConfiguracoesAberta(false);
-                router.push("/notificacoes");
-              }}
-            >
-              <Text style={[styles.configTexto, { color: cores.texto }]}>
-                Notificações
-              </Text>
-            </TouchableOpacity>
 
             <TouchableOpacity
               style={[
@@ -503,5 +495,11 @@ const styles = StyleSheet.create({
     color: "#1C1C1E",
     fontSize: 15,
     fontWeight: "600",
+  },
+
+  temaItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 });

@@ -1,6 +1,6 @@
 //TELA DE ESCOLHA DE NÍVEL (a tela onde o usuário escolhe seu nível de conhecimento)
-import { router } from "expo-router";
 import { useTema } from "@/contexts/tema";
+import { router } from "expo-router";
 import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -50,7 +50,8 @@ export default function Nivel() {
               styles.opcao,
               {
                 backgroundColor: cores.superficieSuave,
-                borderColor: cores.borda,
+                borderColor:
+                  selecionado === opcao.chave ? cores.destaque : cores.borda,
               },
               selecionado === opcao.chave && styles.opcaoSelecionada,
             ]}

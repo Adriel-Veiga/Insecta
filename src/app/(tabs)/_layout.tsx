@@ -1,5 +1,5 @@
-import { Tabs } from "expo-router";
 import { useTema } from "@/contexts/tema";
+import { Tabs } from "expo-router";
 import { Image } from "react-native";
 
 export default function TabsLayout() {
@@ -37,6 +37,23 @@ export default function TabsLayout() {
                   : require("../../assets/Icons/users-alt.png")
               }
               style={{ width: 35, height: 35 }}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="notificacoes"
+        options={{
+          title: " ",
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={
+                focused
+                  ? require("../../assets/Icons/bell(1).png")
+                  : require("../../assets/Icons/bell.png")
+              }
+              style={{ width: 28, height: 28 }}
             />
           ),
         }}
