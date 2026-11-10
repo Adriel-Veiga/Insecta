@@ -1,19 +1,21 @@
 //TELA DE RECUPERAÇÃO DE SENHA (a tela onde o usuário digita a nova senha)
-import { buscarUsuarioPorEmail, redefinirSenha } from "@/database/db";
 import { useTema } from "@/contexts/tema";
+import { buscarUsuarioPorEmail, redefinirSenha } from "@/database/db";
+import { aviso } from "@/utils/aviso";
+import { senhaValida } from "@/utils/senha";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import {
-  Alert,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -21,6 +23,7 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 
 export default function RecuperarSenha() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   // recupera o email que veio da tela anterior (remail.tsx)
   const { email } = useLocalSearchParams<{ email: string }>();
@@ -31,37 +34,37 @@ export default function RecuperarSenha() {
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
 
   const redefinir = async () => {
-    if (!email) {
-      // segurança extra: se por algum motivo chegou aqui sem email, volta
-      Alert.alert("Erro", "Email não encontrado. Tente novamente.");
-      router.replace("/remail");
-      return;
-    }
-
-    if (!novaSenha.trim()) {
-      return Alert.alert("Recuperar senha", "Digite a nova senha");
-    }
-
-    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-    if (!regexSenha.test(novaSenha)) {
-      Alert.alert(
-        "Senha",
-        "A senha precisa ter 8 caracteres, letras maiúsculas e minúsculas, números e caracteres especiais",
-      );
-      return;
-    }
-
-    if (novaSenha !== confirmarNovaSenha) {
-      Alert.alert("Senha", "As senhas não coincidem");
-      return;
-    }
-
+    console.log("redefinir senha clicado");
     try {
+      if (!email) {
+        aviso("Erro", "Email não encontrado. Tente novamente.");
+        router.replace("/remail");
+        return;
+      }
+
+      if (!novaSenha.trim()) {
+        return aviso("Recuperar senha", "Digite a nova senha");
+      }
+
+      if (!senhaValida(novaSenha)) {
+        aviso(
+          "Senha",
+          "A senha precisa ter 8 caracteres, letras maiúsculas e minúsculas, números e caracteres especiais",
+        );
+        return;
+      }
+
+      if (novaSenha !== confirmarNovaSenha) {
+        aviso("Senha", "As senhas não coincidem");
+        return;
+      }
+
       // busca o usuário de novo (garante que ainda existe e pega o id)
-      const usuario = await buscarUsuarioPorEmail(email);
+      const usuario = await buscarUsuarioPorEmail(db, email);
+      console.log("resultado consulta redefinir senha", usuario);
 
       if (!usuario) {
-        Alert.alert("Erro", "Não encontramos essa conta");
+        aviso("Erro", "Não encontramos essa conta");
         return;
       }
 
@@ -70,15 +73,18 @@ export default function RecuperarSenha() {
         novaSenha,
       );
 
-      await redefinirSenha(usuario.id, novaSenhaHash);
+      const resultado = await redefinirSenha(db, usuario.id, novaSenhaHash);
+      console.log("resultado atualização de senha", resultado);
 
-      Alert.alert("Sucesso", "Senha redefinida! Faça login com a nova senha.");
+      aviso("Sucesso", "Senha redefinida! Faça login com a nova senha.");
       router.replace("/login");
     } catch (erro) {
       console.log(erro);
-      Alert.alert(
+      aviso(
         "Erro",
-        "Não foi possível redefinir a senha. Tente novamente.",
+        erro instanceof Error
+          ? erro.message
+          : "Não foi possível redefinir a senha.",
       );
     }
   };

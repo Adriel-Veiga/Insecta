@@ -11,13 +11,29 @@ import {
     useFonts,
 } from "@expo-google-fonts/pixelify-sans";
 import { router, Stack } from "expo-router";
+import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 import { useEffect } from "react";
 import { AppState, Platform } from "react-native";
 
-// ja inicia o bannco de dados antes de renderizar as telass
-iniciarBanco();
-
 export default function Layout() {
+  const [fontsLoaded] = useFonts({
+    PixelifySans_400Regular,
+    Baloo2_400Regular,
+    Baloo2_700Bold,
+  });
+
+  if (!fontsLoaded) return null;
+
+  return (
+    <SQLiteProvider databaseName="insecta.db" onInit={iniciarBanco}>
+      <LayoutContent />
+    </SQLiteProvider>
+  );
+}
+
+function LayoutContent() {
+  const db = useSQLiteContext();
+
   useEffect(() => {
     if (!__DEV__ || Platform.OS === "web") return;
 
@@ -29,7 +45,7 @@ export default function Layout() {
       estadoAnterior = estado;
 
       if (saiuParaSegundoPlano && !sistemaSeletorAberto()) {
-        limpezaPendente = limparDadosDeTeste();
+        limpezaPendente = limparDadosDeTeste(db);
       }
 
       if (estado === "active" && limpezaPendente) {
@@ -40,18 +56,8 @@ export default function Layout() {
     });
 
     return () => inscricao.remove();
-  }, []);
+  }, [db]);
 
-  // carrega as fontes personalizadas antes de renderizar a navegaçãoo
-  const [fontsLoaded] = useFonts({
-    PixelifySans_400Regular,
-    Baloo2_400Regular,
-    Baloo2_700Bold,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
   //retorna a navegação com as telas do app
   return (
     <TemaProvider>

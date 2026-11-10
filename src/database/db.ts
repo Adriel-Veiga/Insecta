@@ -1,16 +1,15 @@
 //BANCO DE DADOS SQLITE
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Directory, File, Paths } from "expo-file-system";
-import * as SQLite from "expo-sqlite";
+import type { SQLiteDatabase } from "expo-sqlite";
+import { Platform } from "react-native";
 
-// abre (ou cria) o arquivo do banco dentro do dispositivo
-export const db = SQLite.openDatabaseSync("insecta.db");
 let seletorSistemaAberto = false;
 
 // cria a tabela de usuários, se ainda não existir
-export function iniciarBanco() {
-  db.execSync("PRAGMA foreign_keys = ON;");
-  db.execSync(`
+export async function iniciarBanco(db: SQLiteDatabase) {
+  await db.execAsync("PRAGMA foreign_keys = ON;");
+  await db.execAsync(`
     CREATE TABLE IF NOT EXISTS usuarios (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT,
@@ -23,7 +22,7 @@ export function iniciarBanco() {
     );
   `);
 
-  db.execSync(`
+  await db.execAsync(`
     CREATE TABLE IF NOT EXISTS amizades (
       usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
       amigo_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -32,23 +31,25 @@ export function iniciarBanco() {
     );
   `);
 
-  const colunas = db.getAllSync<{ name: string }>(
+  const colunas = await db.getAllAsync<{ name: string }>(
     "PRAGMA table_info(usuarios)",
   );
   if (!colunas.some((coluna) => coluna.name === "progresso_atividades")) {
-    db.execSync(
+    await db.execAsync(
       "ALTER TABLE usuarios ADD COLUMN progresso_atividades TEXT NOT NULL DEFAULT '{}';",
     );
   }
   if (!colunas.some((coluna) => coluna.name === "foto_perfil_uri")) {
-    db.execSync("ALTER TABLE usuarios ADD COLUMN foto_perfil_uri TEXT;");
+    await db.execAsync("ALTER TABLE usuarios ADD COLUMN foto_perfil_uri TEXT;");
   }
   const possuiNivel = colunas.some((coluna) => coluna.name === "nivel");
   const possuiNivelAntigo = colunas.some((coluna) => coluna.name === "nível");
   if (!possuiNivel) {
-    db.execSync("ALTER TABLE usuarios ADD COLUMN nivel TEXT;");
+    await db.execAsync("ALTER TABLE usuarios ADD COLUMN nivel TEXT;");
     if (possuiNivelAntigo) {
-      db.execSync('UPDATE usuarios SET nivel = "nível" WHERE nivel IS NULL;');
+      await db.execAsync(
+        'UPDATE usuarios SET nivel = "nível" WHERE nivel IS NULL;',
+      );
     }
   }
 }
@@ -56,30 +57,32 @@ export function iniciarBanco() {
 export function definirSeletorSistemaAberto(aberto: boolean) {
   seletorSistemaAberto = aberto;
 }
-
+44;
 export function sistemaSeletorAberto() {
   return seletorSistemaAberto;
 }
 
-export async function limparDadosDeTeste() {
+export async function limparDadosDeTeste(db: SQLiteDatabase) {
   await db.withTransactionAsync(async () => {
     await db.runAsync("DELETE FROM amizades");
     await db.runAsync("DELETE FROM usuarios");
   });
   await AsyncStorage.multiRemove(["usuarioId", "apelido"]);
 
-  try {
-    const arquivos = new Directory(Paths.document).list();
-    for (const arquivo of arquivos) {
-      if (
-        arquivo instanceof File &&
-        /^perfil-\d+-\d+\.(jpg|png|webp)$/.test(arquivo.name)
-      ) {
-        arquivo.delete();
+  if (Platform.OS !== "web") {
+    try {
+      const arquivos = new Directory(Paths.document).list();
+      for (const arquivo of arquivos) {
+        if (
+          arquivo instanceof File &&
+          /^perfil-\d+-\d+\.(jpg|png|webp)$/.test(arquivo.name)
+        ) {
+          arquivo.delete();
+        }
       }
+    } catch {
+      // A limpeza das fotos não deve impedir a remoção dos dados do banco.
     }
-  } catch {
-    // A limpeza das fotos não deve impedir a remoção dos dados do banco.
   }
 }
 
@@ -97,7 +100,10 @@ export type AmigoRanking = {
   usuarioAtual: boolean;
 };
 
-export async function adicionarAmigoPorApelido(apelidoInformado: string) {
+export async function adicionarAmigoPorApelido(
+  db: SQLiteDatabase,
+  apelidoInformado: string,
+) {
   const usuarioId = await getUsuarioLogadoId();
   if (!usuarioId) throw new Error("Entre na sua conta para adicionar amigos.");
 
@@ -140,7 +146,9 @@ export async function adicionarAmigoPorApelido(apelidoInformado: string) {
   });
 }
 
-export async function carregarRankingSocial(): Promise<AmigoRanking[]> {
+export async function carregarRankingSocial(
+  db: SQLiteDatabase,
+): Promise<AmigoRanking[]> {
   const usuarioId = await getUsuarioLogadoId();
   if (!usuarioId) return [];
 
@@ -189,11 +197,16 @@ export async function carregarRankingSocial(): Promise<AmigoRanking[]> {
 }
 
 // salva o apelido do usuário no banco, ligado ao id dele
-export async function salvarApelido(usuarioId: number, apelido: string) {
-  await db.runAsync("UPDATE usuarios SET apelido = ? WHERE id = ?", [
-    apelido,
-    usuarioId,
-  ]);
+export async function salvarApelido(
+  db: SQLiteDatabase,
+  usuarioId: number,
+  apelido: string,
+) {
+  const resultado = await db.runAsync(
+    "UPDATE usuarios SET apelido = ? WHERE id = ?",
+    [apelido, usuarioId],
+  );
+  return resultado;
 }
 
 export type PerfilUsuario = {
@@ -203,7 +216,9 @@ export type PerfilUsuario = {
   progressoAtividades: string;
 };
 
-export async function carregarPerfilUsuario(): Promise<PerfilUsuario | null> {
+export async function carregarPerfilUsuario(
+  db: SQLiteDatabase,
+): Promise<PerfilUsuario | null> {
   const usuarioId = await getUsuarioLogadoId();
   if (!usuarioId) return null;
 
@@ -226,20 +241,28 @@ export async function carregarPerfilUsuario(): Promise<PerfilUsuario | null> {
   };
 }
 
-export async function salvarFotoPerfil(uri: string) {
+export async function salvarFotoPerfil(db: SQLiteDatabase, uri: string) {
   const usuarioId = await getUsuarioLogadoId();
   if (!usuarioId) throw new Error("Entre na sua conta para salvar a foto.");
-  if (!uri.startsWith("file://")) throw new Error("Arquivo de foto inválido.");
+  const uriValida =
+    Platform.OS === "web"
+      ? /^data:image\/(jpeg|png|webp);base64,/.test(uri)
+      : uri.startsWith("file://");
+  if (!uriValida) {
+    throw new Error("Arquivo de foto inválido.");
+  }
 
   const resultado = await db.runAsync(
     "UPDATE usuarios SET foto_perfil_uri = ? WHERE id = ?",
     [uri, usuarioId],
   );
   if (resultado.changes === 0) throw new Error("Usuário não encontrado.");
+  return resultado;
 }
 
 // verifica se existe um usuário com esse email (retorna o id, ou null)
 export async function buscarUsuarioPorEmail(
+  db: SQLiteDatabase,
   email: string,
 ): Promise<{ id: number } | null> {
   const usuario = await db.getFirstAsync<{ id: number }>(
@@ -250,22 +273,33 @@ export async function buscarUsuarioPorEmail(
 }
 
 // atualiza a senha de um usuário específico
-export async function redefinirSenha(usuarioId: number, novaSenhaHash: string) {
-  await db.runAsync("UPDATE usuarios SET senha = ? WHERE id = ?", [
-    novaSenhaHash,
-    usuarioId,
-  ]);
+export async function redefinirSenha(
+  db: SQLiteDatabase,
+  usuarioId: number,
+  novaSenhaHash: string,
+) {
+  const resultado = await db.runAsync(
+    "UPDATE usuarios SET senha = ? WHERE id = ?",
+    [novaSenhaHash, usuarioId],
+  );
+  return resultado;
 }
 
 // salva o nível do usuário no banco, ligado ao id dele
-export async function salvarNivel(usuarioId: number, nivel: string) {
+export async function salvarNivel(
+  db: SQLiteDatabase,
+  usuarioId: number,
+  nivel: string,
+) {
   await db.runAsync("UPDATE usuarios SET nivel = ? WHERE id = ?", [
     nivel,
     usuarioId,
   ]);
 }
 
-export async function carregarNivelUsuario(): Promise<string | null> {
+export async function carregarNivelUsuario(
+  db: SQLiteDatabase,
+): Promise<string | null> {
   const usuarioId = await getUsuarioLogadoId();
   if (!usuarioId) return null;
 

@@ -1,17 +1,19 @@
 //TELA DE APELIDO (obviamente a tela que pergunta o apelido do usuário)
-import { getUsuarioLogadoId, salvarApelido } from "@/database/db";
 import { useTema } from "@/contexts/tema";
+import { getUsuarioLogadoId, salvarApelido } from "@/database/db";
+import { aviso } from "@/utils/aviso";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,27 +22,38 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 
 export default function IndexPage() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   const [id_usuario, setApelido] = useState("");
 
   // salva o apelido no banco de dados e no AsyncStorage, e navega para a tela de usuário
   async function continuar() {
-    if (!id_usuario.trim()) {
-      return; // o apelido não pode ser vazio
-    }
-
+    console.log("apelido continuar clicado");
     try {
+      if (!id_usuario.trim()) {
+        aviso("Apelido", "Digite um apelido para continuar.");
+        return;
+      }
       const usuarioId = await getUsuarioLogadoId();
+      console.log("resultado consulta usuário da sessão", usuarioId);
 
       if (usuarioId) {
         // salva o apelido no banco de dados, associando ao usuário logado
-        await salvarApelido(usuarioId, id_usuario);
+        const resultado = await salvarApelido(db, usuarioId, id_usuario);
+        console.log("resultado atualização de apelido", resultado);
       }
 
       // mantém no AsyncStorage
       await AsyncStorage.setItem("apelido", id_usuario);
     } catch (erro) {
       console.log(erro);
+      aviso(
+        "Erro",
+        erro instanceof Error
+          ? erro.message
+          : "Não foi possível salvar o apelido.",
+      );
+      return;
     }
     //MUDAR! troca pra tela do usuário(porque estava testando) mas vai para a tela de avaliação!!!
     router.push("/nivel-intro");

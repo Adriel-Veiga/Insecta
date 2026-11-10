@@ -3,26 +3,28 @@ import { CabecalhoProgresso } from "@/components/cabecalho-progresso";
 import { Input } from "@/components/input";
 import { useTema } from "@/contexts/tema";
 import {
-  adicionarAmigoPorApelido,
-  carregarRankingSocial,
-  type AmigoRanking,
+    adicionarAmigoPorApelido,
+    carregarRankingSocial,
+    type AmigoRanking,
 } from "@/database/db";
+import { aviso } from "@/utils/aviso";
 import { useFocusEffect } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ALTURA_MAXIMA = 190;
 
 export default function Social() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   const [apelidoAmigo, setApelidoAmigo] = useState("");
   const [ranking, setRanking] = useState<AmigoRanking[]>([]);
@@ -31,25 +33,25 @@ export default function Social() {
 
   const atualizarRanking = useCallback(async () => {
     try {
-      setRanking(await carregarRankingSocial());
+      setRanking(await carregarRankingSocial(db));
     } catch {
-      Alert.alert("Erro", "Não foi possível carregar o ranking social.");
+      aviso("Erro", "Não foi possível carregar o ranking social.");
     } finally {
       setCarregando(false);
     }
-  }, []);
+  }, [db]);
 
   useFocusEffect(
     useCallback(() => {
       let ativo = true;
       setCarregando(true);
-      carregarRankingSocial()
+      carregarRankingSocial(db)
         .then((dados) => {
           if (ativo) setRanking(dados);
         })
         .catch(() => {
           if (ativo)
-            Alert.alert("Erro", "Não foi possível carregar o ranking social.");
+            aviso("Erro", "Não foi possível carregar o ranking social.");
         })
         .finally(() => {
           if (ativo) setCarregando(false);
@@ -57,19 +59,19 @@ export default function Social() {
       return () => {
         ativo = false;
       };
-    }, []),
+    }, [db]),
   );
 
   async function adicionarAmigo() {
     if (adicionando) return;
     setAdicionando(true);
     try {
-      await adicionarAmigoPorApelido(apelidoAmigo);
+      await adicionarAmigoPorApelido(db, apelidoAmigo);
       setApelidoAmigo("");
       await atualizarRanking();
-      Alert.alert("Amigo adicionado", "A pessoa já aparece no seu ranking.");
+      aviso("Amigo adicionado", "A pessoa já aparece no seu ranking.");
     } catch (erro) {
-      Alert.alert(
+      aviso(
         "Não foi possível adicionar",
         erro instanceof Error ? erro.message : "Tente novamente.",
       );
