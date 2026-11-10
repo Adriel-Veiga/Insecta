@@ -1,4 +1,5 @@
-import { db, getUsuarioLogadoId } from "@/database/db";
+import { getUsuarioLogadoId } from "@/database/db";
+import type { SQLiteDatabase } from "expo-sqlite";
 
 export type ProgressoAtividades = Record<number, number>;
 
@@ -32,7 +33,9 @@ function parsearProgresso(valor: string | null): ProgressoAtividades {
   }
 }
 
-export async function carregarProgressoAtividades(): Promise<ProgressoAtividades> {
+export async function carregarProgressoAtividades(
+  db: SQLiteDatabase,
+): Promise<ProgressoAtividades> {
   const usuarioId = await getUsuarioLogadoId();
   if (!usuarioId) return {};
 
@@ -44,13 +47,14 @@ export async function carregarProgressoAtividades(): Promise<ProgressoAtividades
 }
 
 export async function salvarProgressoAtividade(
+  db: SQLiteDatabase,
   id: number,
   progresso: number,
 ): Promise<ProgressoAtividades> {
   const usuarioId = await getUsuarioLogadoId();
   if (!usuarioId) throw new Error("Nenhum usuário está conectado.");
 
-  const atual = await carregarProgressoAtividades();
+  const atual = await carregarProgressoAtividades(db);
   const atualizado = {
     ...atual,
     [id]: Math.max(atual[id] ?? 0, Math.min(100, progresso)),

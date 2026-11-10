@@ -1,12 +1,13 @@
 //TELA DE LOGIN (obviamente a tela de login do usuário)
-import { db } from "@/database/db";
 import { useTema } from "@/contexts/tema";
+import { aviso } from "@/utils/aviso";
+import { senhaValida } from "@/utils/senha";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
 import { Link, router } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import {
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -22,6 +23,7 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 
 export default function Login() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -29,27 +31,26 @@ export default function Login() {
 
   // Lógica para validar o formulário antes de avançar
   const entrar = async () => {
-    if (!email.trim() || !senha.trim()) {
-      return Alert.alert("Entrar", "Preencha email e senha para entrar");
-    }
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!regex.test(email)) {
-      Alert.alert("Email", "Use um email válido");
-      return;
-    }
-
-    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-
-    if (!regexSenha.test(senha)) {
-      Alert.alert(
-        "Senha",
-        "A senha precisa ter 8 caracteres, letras maiúsculas e minúsculas, números e caracteres especiais",
-      );
-      return;
-    }
-
+    console.log("login clicado");
     try {
+      if (!email.trim() || !senha.trim()) {
+        return aviso("Entrar", "Preencha email e senha para entrar");
+      }
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!regex.test(email)) {
+        aviso("Email", "Use um email válido");
+        return;
+      }
+
+      if (!senhaValida(senha)) {
+        aviso(
+          "Senha",
+          "A senha precisa ter 8 caracteres, letras maiúsculas e minúsculas, números e caracteres especiais",
+        );
+        return;
+      }
+
       const senhaHash = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
         senha,
@@ -63,9 +64,10 @@ export default function Login() {
         email,
         senhaHash,
       ]);
+      console.log("resultado consulta login", usuario);
 
       if (!usuario) {
-        Alert.alert("Entrar", "Email ou senha incorretos");
+        aviso("Entrar", "Email ou senha incorretos");
         return;
       }
 
@@ -75,7 +77,10 @@ export default function Login() {
       router.push("/apelido");
     } catch (erro) {
       console.log(erro);
-      Alert.alert("Erro", "Não foi possível entrar. Tente novamente.");
+      aviso(
+        "Erro",
+        erro instanceof Error ? erro.message : "Não foi possível entrar.",
+      );
     }
   };
   // componentes da tela

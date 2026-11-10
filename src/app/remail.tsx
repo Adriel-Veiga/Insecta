@@ -1,16 +1,17 @@
 //TELA DE RECUPERAÇÃO DE EMAIL (a tela onde o usuário digita o email para recuperar a senha)
-import { buscarUsuarioPorEmail } from "@/database/db";
 import { useTema } from "@/contexts/tema";
+import { buscarUsuarioPorEmail } from "@/database/db";
+import { aviso } from "@/utils/aviso";
 import { Link, router } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,29 +19,29 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 
 export default function RecuperarEmail() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   const [email, setEmail] = useState("");
 
   const verificarEmail = async () => {
-    if (!email.trim()) {
-      return Alert.alert("Recuperar senha", "Digite seu email");
-    }
-
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!regex.test(email)) {
-      Alert.alert("Email", "Use um email válido");
-      return;
-    }
-
+    console.log("verificar email clicado");
     try {
+      if (!email.trim()) {
+        return aviso("Recuperar senha", "Digite seu email");
+      }
+
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!regex.test(email)) {
+        aviso("Email", "Use um email válido");
+        return;
+      }
+
       // confere se existe um usuário com esse email
-      const usuario = await buscarUsuarioPorEmail(email);
+      const usuario = await buscarUsuarioPorEmail(db, email);
+      console.log("resultado consulta recuperar email", usuario);
 
       if (!usuario) {
-        Alert.alert(
-          "Recuperar senha",
-          "Não encontramos uma conta com esse email",
-        );
+        aviso("Recuperar senha", "Não encontramos uma conta com esse email");
         return;
       }
 
@@ -51,9 +52,11 @@ export default function RecuperarEmail() {
       });
     } catch (erro) {
       console.log(erro);
-      Alert.alert(
+      aviso(
         "Erro",
-        "Não foi possível verificar o email. Tente novamente.",
+        erro instanceof Error
+          ? erro.message
+          : "Não foi possível verificar o email.",
       );
     }
   };

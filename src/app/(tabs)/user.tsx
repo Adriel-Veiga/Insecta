@@ -1,23 +1,24 @@
 import { CabecalhoProgresso } from "@/components/cabecalho-progresso";
 import { useTema } from "@/contexts/tema";
 import {
-  carregarPerfilUsuario,
-  definirSeletorSistemaAberto,
-  salvarFotoPerfil,
+    carregarPerfilUsuario,
+    definirSeletorSistemaAberto,
+    salvarFotoPerfil,
 } from "@/database/db";
+import { aviso } from "@/utils/aviso";
 import { File, Paths } from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 import {
-  Alert,
-  Image,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Image,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -25,6 +26,7 @@ const FOTO_PADRAO = require("../../assets/Icons/user.png");
 const TAMANHO_MAXIMO_FOTO = 5 * 1024 * 1024;
 
 export default function Perfil() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   const [apelido, setApelido] = useState("Usuário");
   const [fotoUri, setFotoUri] = useState<string | null>(null);
@@ -35,11 +37,17 @@ export default function Perfil() {
   useFocusEffect(
     useCallback(() => {
       let ativo = true;
-      carregarPerfilUsuario()
+      carregarPerfilUsuario(db)
         .then((perfil) => {
           if (!ativo) return;
+          console.log("resultado consulta carregar perfil", perfil);
           setApelido(perfil?.apelido?.trim() || "Usuário");
-          setFotoUri(perfil?.fotoPerfilUri ?? null);
+          const fotoUri = perfil?.fotoPerfilUri ?? null;
+          setFotoUri(
+            Platform.OS === "web" && fotoUri?.startsWith("file://")
+              ? null
+              : fotoUri,
+          );
           try {
             const progresso: unknown = JSON.parse(
               perfil?.progressoAtividades ?? "{}",
@@ -55,35 +63,32 @@ export default function Perfil() {
           }
         })
         .catch(() => {
-          if (ativo) Alert.alert("Erro", "Não foi possível carregar o perfil.");
+          if (ativo) aviso("Erro", "Não foi possível carregar o perfil.");
         });
 
       return () => {
         ativo = false;
       };
-    }, []),
+    }, [db]),
   );
 
   async function escolherFoto() {
+    console.log("escolher foto clicado");
     if (salvandoFoto) return;
-    if (Platform.OS === "web") {
-      Alert.alert(
-        "Indisponível no navegador",
-        "A foto de perfil pode ser alterada pelo aplicativo móvel.",
-      );
-      return;
-    }
     setSalvandoFoto(true);
     definirSeletorSistemaAberto(true);
     let arquivoDestino: File | null = null;
     try {
-      const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permissao.granted) {
-        Alert.alert(
-          "Permissão necessária",
-          "Autorize o acesso às fotos para escolher uma imagem de perfil.",
-        );
-        return;
+      if (Platform.OS !== "web") {
+        const permissao =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permissao.granted) {
+          aviso(
+            "Permissão necessária",
+            "Autorize o acesso às fotos para escolher uma imagem de perfil.",
+          );
+          return;
+        }
       }
 
       const resultado = await ImagePicker.launchImageLibraryAsync({
@@ -92,55 +97,77 @@ export default function Perfil() {
         aspect: [1, 1],
         quality: 0.8,
         exif: false,
-        base64: false,
+        base64: Platform.OS === "web",
         allowsMultipleSelection: false,
       });
       if (resultado.canceled) return;
 
       const imagem = resultado.assets[0];
       if (!imagem || imagem.type !== "image") {
-        Alert.alert("Imagem inválida", "Escolha um arquivo de imagem.");
+        aviso("Imagem inválida", "Escolha um arquivo de imagem.");
         return;
       }
 
-      const arquivoOrigem = new File(imagem.uri);
-      const tamanho = imagem.fileSize ?? arquivoOrigem.size;
-      const tipo = imagem.mimeType ?? arquivoOrigem.type;
+      const tamanho =
+        imagem.fileSize ??
+        (Platform.OS === "web"
+          ? imagem.file?.size
+          : new File(imagem.uri).size) ??
+        0;
+      const tipo =
+        imagem.mimeType ??
+        (Platform.OS === "web"
+          ? imagem.file?.type
+          : new File(imagem.uri).type) ??
+        "";
       if (
         tamanho <= 0 ||
         tamanho > TAMANHO_MAXIMO_FOTO ||
         !["image/jpeg", "image/png", "image/webp"].includes(tipo)
       ) {
-        Alert.alert(
+        aviso(
           "Imagem não aceita",
           "Use uma foto JPG, PNG ou WebP de até 5 MB.",
         );
         return;
       }
 
-      const perfil = await carregarPerfilUsuario();
+      const perfil = await carregarPerfilUsuario(db);
+      console.log("resultado consulta perfil para foto", perfil);
       if (!perfil) throw new Error("Usuário não encontrado.");
 
-      const extensao =
-        tipo === "image/png" ? "png" : tipo === "image/webp" ? "webp" : "jpg";
-      arquivoDestino = new File(
-        Paths.document,
-        `perfil-${perfil.id}-${Date.now()}.${extensao}`,
-      );
-      arquivoOrigem.copy(arquivoDestino);
-      await salvarFotoPerfil(arquivoDestino.uri);
-      setFotoUri(arquivoDestino.uri);
-      if (perfil.fotoPerfilUri?.startsWith(Paths.document.uri)) {
-        try {
-          const fotoAnterior = new File(perfil.fotoPerfilUri);
-          if (fotoAnterior.exists) fotoAnterior.delete();
-        } catch {
-          // A limpeza antiga não deve invalidar a foto já salva.
+      if (Platform.OS === "web") {
+        if (!imagem.base64) throw new Error("Não foi possível ler a imagem.");
+        const uri = `data:${tipo};base64,${imagem.base64}`;
+        const resultadoSalvamento = await salvarFotoPerfil(db, uri);
+        console.log("resultado salvar foto web", resultadoSalvamento);
+        setFotoUri(uri);
+      } else {
+        const extensao =
+          tipo === "image/png" ? "png" : tipo === "image/webp" ? "webp" : "jpg";
+        arquivoDestino = new File(
+          Paths.document,
+          `perfil-${perfil.id}-${Date.now()}.${extensao}`,
+        );
+        new File(imagem.uri).copy(arquivoDestino);
+        const resultadoSalvamento = await salvarFotoPerfil(
+          db,
+          arquivoDestino.uri,
+        );
+        console.log("resultado salvar foto nativa", resultadoSalvamento);
+        setFotoUri(arquivoDestino.uri);
+        if (perfil.fotoPerfilUri?.startsWith(Paths.document.uri)) {
+          try {
+            const fotoAnterior = new File(perfil.fotoPerfilUri);
+            if (fotoAnterior.exists) fotoAnterior.delete();
+          } catch {
+            // A limpeza antiga não deve invalidar a foto já salva.
+          }
         }
       }
     } catch {
       if (arquivoDestino?.exists) arquivoDestino.delete();
-      Alert.alert("Erro", "Não foi possível salvar a foto de perfil.");
+      aviso("Erro", "Não foi possível salvar a foto de perfil.");
     } finally {
       definirSeletorSistemaAberto(false);
       setSalvandoFoto(false);

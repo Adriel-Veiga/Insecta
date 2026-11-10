@@ -1,19 +1,20 @@
 //TELA DE CADASTRO (a tela onde o usuário cria uma conta)
-import { db } from "@/database/db";
 import { useTema } from "@/contexts/tema";
+import { aviso } from "@/utils/aviso";
+import { senhaValida } from "@/utils/senha";
 import * as Crypto from "expo-crypto";
 import { Link, router } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import {
-  Alert,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -21,6 +22,7 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 
 export default function Cadastro() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -32,49 +34,53 @@ export default function Cadastro() {
 
   // esse fluxo garante que a conta só seja gravada quando todos os dados estiverem válidos
   const cadastrar = async () => {
-    if (!email.trim() || !senha.trim()) {
-      return Alert.alert("Entrar", "Preencha todo os campos para se cadastrar");
-    }
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!regex.test(email)) {
-      Alert.alert("Email", "Use um email válido");
-      return;
-    }
-
-    const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-    if (!regexSenha.test(senha)) {
-      Alert.alert(
-        "Senha",
-        "A senha precisa ter 8 caracteres, letras maiúsculas e minúsculas, números e caracteres especiais",
-      );
-      return;
-    }
-
-    if (senha !== confirmarsenha) {
-      Alert.alert("Senha", "As senhas não coincidem");
-      return;
-    }
+    console.log("cadastro clicado");
     try {
+      if (!email.trim() || !senha.trim()) {
+        return aviso("Entrar", "Preencha todo os campos para se cadastrar");
+      }
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!regex.test(email)) {
+        aviso("Email", "Use um email válido");
+        return;
+      }
+
+      if (!senhaValida(senha)) {
+        aviso(
+          "Senha",
+          "A senha precisa ter 8 caracteres, letras maiúsculas e minúsculas, números e caracteres especiais",
+        );
+        return;
+      }
+
+      if (senha !== confirmarsenha) {
+        aviso("Senha", "As senhas não coincidem");
+        return;
+      }
       // gera um hash da senha para que o valor armazenado não fique em texto no banco de dados
       const senhaHash = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
         senha,
       );
       // insere o usuário no banco de dados
-      await db.runAsync(
+      const resultado = await db.runAsync(
         "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)",
         [nome, email, senhaHash],
       );
+      console.log("resultado consulta cadastro", resultado);
 
-      Alert.alert("Cadastro", "Cadastro realizado com sucesso");
+      aviso("Cadastro", "Cadastro realizado com sucesso");
       router.replace("/login");
     } catch (erro: any) {
       console.log(erro);
 
       if (String(erro?.message).includes("UNIQUE")) {
-        Alert.alert("Cadastro", "Esse email já está cadastrado. Tente entrar.");
+        aviso("Cadastro", "Esse email já está cadastrado. Tente entrar.");
       } else {
-        Alert.alert("Erro", "Não foi possível cadastrar. Tente novamente.");
+        aviso(
+          "Erro",
+          erro instanceof Error ? erro.message : "Não foi possível cadastrar.",
+        );
       }
     }
   };

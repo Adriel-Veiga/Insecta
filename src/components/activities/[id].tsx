@@ -2,12 +2,14 @@
 import { Button } from "@/components/button";
 import { useTema } from "@/contexts/tema";
 import {
-  atividadeDesbloqueada,
-  carregarProgressoAtividades,
+    atividadeDesbloqueada,
+    carregarProgressoAtividades,
 } from "@/database/progresso-atividades";
+import { aviso } from "@/utils/aviso";
 import { router, useLocalSearchParams } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // estrutura de dados de cada atividade detalhada
@@ -120,6 +122,7 @@ const atividades: ConteudoAtividade[] = [
 ];
 
 export default function DetalheAtividade() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   // busca o id que vem pela rota dinâmica, como /atividade/1
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -134,7 +137,7 @@ export default function DetalheAtividade() {
     let ativa = true;
     async function carregar() {
       try {
-        const atual = await carregarProgressoAtividades();
+        const atual = await carregarProgressoAtividades(db);
         if (!atividadeDesbloqueada(idAtividade, atual)) {
           if (ativa) setBloqueada(true);
           return;
@@ -143,7 +146,7 @@ export default function DetalheAtividade() {
       } catch {
         if (ativa) {
           setBloqueada(true);
-          Alert.alert("Erro", "Não foi possível carregar seu progresso.");
+          aviso("Erro", "Não foi possível carregar seu progresso.");
         }
       } finally {
         if (ativa) setCarregando(false);
@@ -153,7 +156,7 @@ export default function DetalheAtividade() {
     return () => {
       ativa = false;
     };
-  }, [idAtividade]);
+  }, [db, idAtividade]);
 
   if (!atividade || bloqueada) {
     return (

@@ -1,7 +1,8 @@
 //TELA DE CONFIRMAÇÃO DE NÍVEL (a tela que aparece depois da escolha do nível, para confirmar a escolha)
-import { getUsuarioLogadoId, salvarNivel } from "@/database/db";
 import { useTema } from "@/contexts/tema";
+import { getUsuarioLogadoId, salvarNivel } from "@/database/db";
 import { Link, router, useLocalSearchParams } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -34,6 +35,7 @@ const avancar = () => {
 };
 
 export default function NivelConfirmar() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   const { nivel, nivelPretendido } = useLocalSearchParams<{
     nivel: keyof typeof conteudoPorNivel;
@@ -50,7 +52,7 @@ export default function NivelConfirmar() {
     try {
       const usuarioId = await getUsuarioLogadoId();
       if (usuarioId) {
-        await salvarNivel(usuarioId, nivel);
+        await salvarNivel(db, usuarioId, nivel);
       }
       router.push("/user");
     } catch (erro) {

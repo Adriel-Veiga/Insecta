@@ -5,6 +5,7 @@ import {
     carregarProgressoAtividades,
 } from "@/database/progresso-atividades";
 import { useFocusEffect } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState, type ReactNode } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
@@ -31,6 +32,7 @@ export function CabecalhoProgresso({
   nivel,
   acaoDireita,
 }: CabecalhoProgressoProps) {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   const [progressoCarregado, setProgressoCarregado] = useState(0);
 
@@ -38,7 +40,7 @@ export function CabecalhoProgresso({
     useCallback(() => {
       if (progresso !== undefined) return;
       let ativo = true;
-      carregarProgressoAtividades()
+      carregarProgressoAtividades(db)
         .then((dados) => {
           if (ativo) setProgressoCarregado(calcularProgressoGeral(dados));
         })
@@ -48,7 +50,7 @@ export function CabecalhoProgresso({
       return () => {
         ativo = false;
       };
-    }, [progresso]),
+    }, [db, progresso]),
   );
 
   const nivelNormalizado = nivel?.toLowerCase() ?? "";

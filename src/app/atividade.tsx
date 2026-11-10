@@ -1,5 +1,6 @@
 // TELA DE ATIVIDADE (perguntas de múltipla escolha)
 import { router, useLocalSearchParams } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,8 +10,8 @@ import { MultiplaEscolha } from "@/components/multipla-escolha";
 import { useTema } from "@/contexts/tema";
 import { getUsuarioLogadoId, salvarNivel } from "@/database/db";
 import {
-  perguntasAvancado,
-  perguntasIntermediario,
+    perguntasAvancado,
+    perguntasIntermediario,
 } from "@/database/perguntas";
 
 // nota de porcentagem mínima pra ser aprovado
@@ -23,6 +24,7 @@ const nivelInferior = {
 } as const;
 
 export default function Atividade() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   const { nivelPretendido } = useLocalSearchParams<{
     nivelPretendido: "intermediario" | "avancado";
@@ -88,7 +90,7 @@ export default function Atividade() {
                   try {
                     const usuarioId = await getUsuarioLogadoId();
                     if (usuarioId && nivelPretendido) {
-                      await salvarNivel(usuarioId, nivelPretendido);
+                      await salvarNivel(db, usuarioId, nivelPretendido);
                     }
                   } catch (e) {
                     console.log(e);

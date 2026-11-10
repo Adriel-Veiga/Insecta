@@ -1,8 +1,9 @@
 import { Button } from "@/components/button";
 import { useTema } from "@/contexts/tema";
+import { aviso } from "@/utils/aviso";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, Share, StyleSheet, Text, TextInput, View } from "react-native";
+import { Share, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Feedback() {
@@ -22,7 +23,7 @@ export default function Feedback() {
       });
       if (resultado.action === Share.sharedAction) setMensagem("");
     } catch {
-      Alert.alert("Não foi possível compartilhar", "Tente novamente.");
+      aviso("Não foi possível compartilhar", "Tente novamente.");
     } finally {
       setEnviando(false);
     }

@@ -3,14 +3,17 @@ import { MultiplaEscolha } from "@/components/multipla-escolha";
 import { useTema } from "@/contexts/tema";
 import { perguntasPorAtividade } from "@/database/perguntas";
 import { salvarProgressoAtividade } from "@/database/progresso-atividades";
+import { aviso } from "@/utils/aviso";
 import { router, useLocalSearchParams } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const NOTA_MINIMA = 60;
 
 export default function QuizAtividade() {
+  const db = useSQLiteContext();
   const { cores } = useTema();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const idAtividade = Number(id);
@@ -46,9 +49,9 @@ export default function QuizAtividade() {
     );
 
     try {
-      await salvarProgressoAtividade(idAtividade, percentual);
+      await salvarProgressoAtividade(db, idAtividade, percentual);
     } catch {
-      Alert.alert("Erro", "Não foi possível salvar seu progresso.");
+      aviso("Erro", "Não foi possível salvar seu progresso.");
       return;
     }
 
@@ -56,10 +59,10 @@ export default function QuizAtividade() {
       setAcertos(novosAcertos);
       if ((novosAcertos / perguntas.length) * 100 >= NOTA_MINIMA) {
         try {
-          await salvarProgressoAtividade(idAtividade, 100);
+          await salvarProgressoAtividade(db, idAtividade, 100);
           setResultado("aprovado");
         } catch {
-          Alert.alert("Erro", "Não foi possível registrar a conclusão.");
+          aviso("Erro", "Não foi possível registrar a conclusão.");
         }
       } else {
         setResultado("reprovado");

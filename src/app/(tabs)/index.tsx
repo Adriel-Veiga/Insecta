@@ -5,23 +5,24 @@ import { CirculoProgresso } from "@/components/circulo-progresso";
 import { useTema } from "@/contexts/tema";
 import { carregarNivelUsuario } from "@/database/db";
 import {
-  atividadeDesbloqueada,
-  calcularProgressoGeral,
-  carregarProgressoAtividades,
-  type ProgressoAtividades,
+    atividadeDesbloqueada,
+    calcularProgressoGeral,
+    carregarProgressoAtividades,
+    type ProgressoAtividades,
 } from "@/database/progresso-atividades";
+import { aviso } from "@/utils/aviso";
 import { router, useFocusEffect } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 import {
-  Alert,
-  Image,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
+    Image,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -87,6 +88,7 @@ const atividades: Atividade[] = [
 
 // PÁGINA INICIAL
 export default function IndexPage() {
+  const db = useSQLiteContext();
   const [selecionada, setSelecionada] = useState<Atividade | null>(null);
   const [configuracoesAberta, setConfiguracoesAberta] = useState(false);
   const [progressoAtividades, setProgressoAtividades] =
@@ -97,7 +99,7 @@ export default function IndexPage() {
   useFocusEffect(
     useCallback(() => {
       let ativa = true;
-      Promise.all([carregarProgressoAtividades(), carregarNivelUsuario()])
+      Promise.all([carregarProgressoAtividades(db), carregarNivelUsuario(db)])
         .then(([progresso, nivel]) => {
           if (!ativa) return;
           setProgressoAtividades(progresso);
@@ -111,7 +113,7 @@ export default function IndexPage() {
       return () => {
         ativa = false;
       };
-    }, []),
+    }, [db]),
   );
 
   const progressoGeral = calcularProgressoGeral(progressoAtividades);
@@ -306,7 +308,7 @@ export default function IndexPage() {
                 value={escuro}
                 onValueChange={(valor) => {
                   void definirTemaEscuro(valor).catch(() => {
-                    Alert.alert(
+                    aviso(
                       "Erro",
                       "Não foi possível salvar a preferência de tema.",
                     );
