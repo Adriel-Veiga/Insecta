@@ -67,6 +67,63 @@ export async function salvarProgressoAtividade(
   return atualizado;
 }
 
+export type ResultadoPromocaoNivel =
+  | "incompleto"
+  | "intermediario"
+  | "avancado"
+  | "nivel_maximo";
+
+export async function promoverNivelAposConcluirAtividades(
+  db: SQLiteDatabase,
+): Promise<ResultadoPromocaoNivel> {
+  const usuarioId = await getUsuarioLogadoId();
+  if (!usuarioId) throw new Error("Nenhum usuário está conectado.");
+
+  let resultado: ResultadoPromocaoNivel = "incompleto";
+  await db.withTransactionAsync(async () => {
+    const usuario = await db.getFirstAsync<{
+      nivel: string | null;
+      progresso_atividades: string;
+    }>(
+      "SELECT nivel, progresso_atividades FROM usuarios WHERE id = ?",
+      [usuarioId],
+    );
+    if (!usuario) throw new Error("Usuário não encontrado.");
+
+    const progresso = parsearProgresso(usuario.progresso_atividades);
+    const concluiuTodas = Array.from(
+      { length: TOTAL_ATIVIDADES },
+      (_, indice) => indice + 1,
+    ).every((id) => progresso[id] === 100);
+    if (!concluiuTodas) return;
+
+    const proximoNivel =
+      usuario.nivel === "iniciante"
+        ? "intermediario"
+        : usuario.nivel === "intermediario"
+          ? "avancado"
+          : null;
+
+    if (!proximoNivel) {
+      if (usuario.nivel !== "avancado") {
+        throw new Error("Não foi possível identificar o nível atual.");
+      }
+      resultado = "nivel_maximo";
+      return;
+    }
+
+    const atualizacao = await db.runAsync(
+      "UPDATE usuarios SET nivel = ?, progresso_atividades = '{}' WHERE id = ?",
+      [proximoNivel, usuarioId],
+    );
+    if (atualizacao.changes === 0) throw new Error("Usuário não encontrado.");
+
+    resultado = proximoNivel;
+  });
+
+  return resultado;
+}
+
 export function atividadeDesbloqueada(
   id: number,
   progresso: ProgressoAtividades,

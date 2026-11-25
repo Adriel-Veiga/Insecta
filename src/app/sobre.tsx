@@ -1,3 +1,4 @@
+//TELA SOBRE O APLICATIVO
 import { Button } from "@/components/button";
 import { useTema } from "@/contexts/tema";
 import { router } from "expo-router";

@@ -3,7 +3,12 @@ import { AppModal } from "@/components/app-modal";
 import { CabecalhoProgresso } from "@/components/cabecalho-progresso";
 import { CirculoProgresso } from "@/components/circulo-progresso";
 import { useTema } from "@/contexts/tema";
+import {
+  obterConteudoAtividade,
+  type ConteudoAtividade,
+} from "@/database/conteudos-atividades";
 import { carregarNivelUsuario } from "@/database/db";
+import type { NivelAtividade } from "@/database/perguntas-niveis";
 import {
     atividadeDesbloqueada,
     calcularProgressoGeral,
@@ -30,7 +35,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 type Atividade = {
   id: number;
   titulo: string;
-  descricao: string;
   cor: string;
 };
 
@@ -38,50 +42,36 @@ const atividades: Atividade[] = [
   {
     id: 1,
     titulo: "Atividade 1",
-    descricao:
-      "Nessa atividade você vai aprender os conceitos básicos de hardware, identificando as principais peças de um computador.",
     cor: "#5B5FEF",
   },
   {
     id: 2,
     titulo: "Atividade 2",
-    descricao:
-      "Aprenda a proteger seus dados e reconhecer riscos no ambiente digital.",
     cor: "#3730A3",
   },
   {
     id: 3,
     titulo: "Atividade 3",
-    descricao:
-      "Conheça a internet, os navegadores e como encontrar informações confiáveis.",
     cor: "#5B5FEF",
   },
   {
     id: 4,
     titulo: "Atividade 4",
-    descricao:
-      "Explore os sistemas operacionais e aprenda a navegar pelo computador.",
     cor: "#3730A3",
   },
   {
     id: 5,
     titulo: "Atividade 5",
-    descricao:
-      "Organize arquivos e pastas para manter seus documentos fáceis de encontrar.",
     cor: "#5B5FEF",
   },
   {
     id: 6,
     titulo: "Atividade 6",
-    descricao:
-      "Use ferramentas digitais para se comunicar com clareza e responsabilidade.",
     cor: "#3730A3",
   },
   {
     id: 7,
     titulo: "Atividade 7",
-    descricao:
-      "Reúna o que aprendeu em um desafio final de informática básica.",
     cor: "#5B5FEF",
   },
 ];
@@ -93,7 +83,7 @@ export default function IndexPage() {
   const [configuracoesAberta, setConfiguracoesAberta] = useState(false);
   const [progressoAtividades, setProgressoAtividades] =
     useState<ProgressoAtividades>({});
-  const [nivelUsuario, setNivelUsuario] = useState<string | null>(null);
+  const [nivelUsuario, setNivelUsuario] = useState<NivelAtividade | null>(null);
   const { escuro, cores, definirTemaEscuro } = useTema();
 
   useFocusEffect(
@@ -103,7 +93,13 @@ export default function IndexPage() {
         .then(([progresso, nivel]) => {
           if (!ativa) return;
           setProgressoAtividades(progresso);
-          setNivelUsuario(nivel);
+          setNivelUsuario(
+            nivel === "iniciante" ||
+              nivel === "intermediario" ||
+              nivel === "avancado"
+              ? nivel
+              : null,
+          );
         })
         .catch(() => {
           if (!ativa) return;
@@ -119,9 +115,19 @@ export default function IndexPage() {
   const progressoGeral = calcularProgressoGeral(progressoAtividades);
 
   function abrirDetalhes(atividade: Atividade) {
+    if (!nivelUsuario) {
+      aviso("Nível não encontrado", "Escolha seu nível para ver o conteúdo.");
+      return;
+    }
     if (!atividadeDesbloqueada(atividade.id, progressoAtividades)) return;
     setSelecionada(atividade);
   }
+
+  const conteudoSelecionado:
+    | ConteudoAtividade
+    | undefined = selecionada
+    ? obterConteudoAtividade(nivelUsuario, selecionada.id)
+    : undefined;
 
   function iniciarAtividade() {
     if (!selecionada) return;
@@ -211,10 +217,11 @@ export default function IndexPage() {
       {/* MODAL DE DESCRIÇÃO — aparece quando "selecionada" não é null */}
       <AppModal visible={!!selecionada} onClose={() => setSelecionada(null)}>
         <Text style={[styles.modalTitulo, { color: cores.destaque }]}>
-          {selecionada?.titulo}
+          {conteudoSelecionado?.titulo ?? selecionada?.titulo}
         </Text>
         <Text style={[styles.modalDescricao, { color: cores.texto }]}>
-          {selecionada?.descricao}
+          {conteudoSelecionado?.descricao ??
+            "Leia o conteúdo da lição antes de começar a atividade."}
         </Text>
         <TouchableOpacity style={styles.modalBotao} onPress={iniciarAtividade}>
           <Text style={styles.startTexto}>Começar</Text>

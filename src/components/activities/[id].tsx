@@ -1,125 +1,25 @@
-// TELA DE DETALHE DA ATIVIDADE (mostra o conteúdo de uma atividade específica pelo id da rota)
+// TELA DE CONTEÚDO (ensina os tópicos da atividade antes do quiz)
 import { Button } from "@/components/button";
 import { useTema } from "@/contexts/tema";
+import { carregarNivelUsuario } from "@/database/db";
 import {
-    atividadeDesbloqueada,
-    carregarProgressoAtividades,
+  obterConteudoAtividade,
+  type ConteudoAtividade,
+} from "@/database/conteudos-atividades";
+import {
+  perguntasPorNivel,
+  type NivelAtividade,
+} from "@/database/perguntas-niveis";
+import {
+  atividadeDesbloqueada,
+  carregarProgressoAtividades,
 } from "@/database/progresso-atividades";
 import { aviso } from "@/utils/aviso";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-// estrutura de dados de cada atividade detalhada
-type ConteudoAtividade = {
-  id: number;
-  titulo: string;
-  descricao: string;
-  imagem: any;
-  objetivo: string;
-  passos: string[];
-};
-
-// lista fixa de atividades para a rota dinâmica
-const atividades: ConteudoAtividade[] = [
-  {
-    id: 1,
-    titulo: "Atividade 1",
-    descricao:
-      "Nessa atividade você vai aprender os conceitos básicos de hardware, identificando as principais peças de um computador.",
-    imagem: require("../../assets/Icons/cartucho1.gif"),
-    objetivo:
-      "Entender o funcionamento dos componentes principais de um computador.",
-    passos: [
-      "Observe o cartucho da atividade e leia a descrição do tema.",
-      "Identifique os elementos mais importantes do hardware.",
-      "Aplique os conceitos aprendidos na prática durante a atividade.",
-    ],
-  },
-  {
-    id: 2,
-    titulo: "Atividade 2",
-    descricao:
-      "Aprenda a proteger seus dados e reconhecer riscos no ambiente digital.",
-    imagem: require("../../assets/Icons/cartucho1.png"),
-    objetivo:
-      "Identificar boas práticas para proteger contas, dispositivos e informações pessoais.",
-    passos: [
-      "Crie senhas fortes e diferentes para cada conta.",
-      "Desconfie de links e mensagens que pedem dados pessoais.",
-      "Mantenha seus dispositivos e aplicativos atualizados.",
-    ],
-  },
-  {
-    id: 3,
-    titulo: "Atividade 3",
-    descricao:
-      "Conheça a internet, os navegadores e como encontrar informações confiáveis.",
-    imagem: require("../../assets/Icons/cartucho1.png"),
-    objetivo:
-      "Entender como acessar a web e avaliar a qualidade de uma informação.",
-    passos: [
-      "Abra um navegador e identifique a barra de endereços.",
-      "Pesquise um tema usando palavras-chave específicas.",
-      "Compare fontes e confira autoria e data da publicação.",
-    ],
-  },
-  {
-    id: 4,
-    titulo: "Atividade 4",
-    descricao:
-      "Explore os sistemas operacionais e aprenda a navegar pelo computador.",
-    imagem: require("../../assets/Icons/cartucho1.png"),
-    objetivo: "Reconhecer as funções principais de um sistema operacional.",
-    passos: [
-      "Identifique a área de trabalho, o menu e a barra de tarefas.",
-      "Abra e alterne entre aplicativos.",
-      "Encerre os programas com segurança.",
-    ],
-  },
-  {
-    id: 5,
-    titulo: "Atividade 5",
-    descricao:
-      "Organize arquivos e pastas para manter seus documentos fáceis de encontrar.",
-    imagem: require("../../assets/Icons/cartucho1.png"),
-    objetivo: "Praticar a criação e organização de arquivos e pastas.",
-    passos: [
-      "Crie uma pasta para um assunto de sua escolha.",
-      "Salve um arquivo dentro dela com um nome claro.",
-      "Localize, renomeie e mova o arquivo.",
-    ],
-  },
-  {
-    id: 6,
-    titulo: "Atividade 6",
-    descricao:
-      "Use ferramentas digitais para se comunicar com clareza e responsabilidade.",
-    imagem: require("../../assets/Icons/cartucho1.png"),
-    objetivo: "Escolher formas adequadas e seguras de comunicação digital.",
-    passos: [
-      "Escolha a ferramenta certa para cada conversa.",
-      "Escreva uma mensagem objetiva e respeitosa.",
-      "Confira destinatários e anexos antes de enviar.",
-    ],
-  },
-  {
-    id: 7,
-    titulo: "Atividade 7",
-    descricao:
-      "Reúna o que aprendeu em um desafio final de informática básica.",
-    imagem: require("../../assets/Icons/cartucho1.png"),
-    objetivo:
-      "Aplicar os conhecimentos de hardware, segurança e uso da internet.",
-    passos: [
-      "Escolha um dispositivo e identifique seus componentes principais.",
-      "Defina cuidados para proteger seus dados durante o uso.",
-      "Pesquise um tema e organize as informações encontradas.",
-    ],
-  },
-];
 
 export default function DetalheAtividade() {
   const db = useSQLiteContext();
@@ -129,23 +29,50 @@ export default function DetalheAtividade() {
   const idAtividade = Number(id);
   const [carregando, setCarregando] = useState(true);
   const [bloqueada, setBloqueada] = useState(false);
+  const [nivel, setNivel] = useState<NivelAtividade | null>(null);
+  const [erroCarregamento, setErroCarregamento] = useState(false);
 
   // encontra a atividade correta com base no id recebido pela URL
-  const atividade = atividades.find((item) => item.id === idAtividade);
+  const licao: ConteudoAtividade | undefined = obterConteudoAtividade(
+    nivel,
+    idAtividade,
+  );
 
   useEffect(() => {
     let ativa = true;
     async function carregar() {
       try {
-        const atual = await carregarProgressoAtividades(db);
+        const [atual, nivelUsuario] = await Promise.all([
+          carregarProgressoAtividades(db),
+          carregarNivelUsuario(db),
+        ]);
+        if (
+          nivelUsuario !== "iniciante" &&
+          nivelUsuario !== "intermediario" &&
+          nivelUsuario !== "avancado"
+        ) {
+          if (ativa) {
+            setBloqueada(true);
+            setErroCarregamento(true);
+          }
+          return;
+        }
+        if (!perguntasPorNivel[nivelUsuario][idAtividade]?.length) {
+          if (ativa) setBloqueada(true);
+          return;
+        }
         if (!atividadeDesbloqueada(idAtividade, atual)) {
           if (ativa) setBloqueada(true);
           return;
         }
-        if (ativa) setBloqueada(false);
+        if (ativa) {
+          setNivel(nivelUsuario);
+          setBloqueada(false);
+        }
       } catch {
         if (ativa) {
           setBloqueada(true);
+          setErroCarregamento(true);
           aviso("Erro", "Não foi possível carregar seu progresso.");
         }
       } finally {
@@ -158,12 +85,26 @@ export default function DetalheAtividade() {
     };
   }, [db, idAtividade]);
 
-  if (!atividade || bloqueada) {
+  if (carregando) {
+    return (
+      <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
+        <View style={styles.containerVazio}>
+          <Text style={[styles.texto, { color: cores.textoSecundario }]}>
+            Carregando conteúdo...
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!licao || bloqueada) {
     return (
       <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
         <View style={styles.containerVazio}>
           <Text style={[styles.erroTitulo, { color: cores.destaque }]}>
-            {bloqueada
+            {erroCarregamento
+              ? "Não foi possível carregar o conteúdo. Volte e tente novamente."
+              : bloqueada
               ? "Conclua a atividade anterior para desbloquear esta."
               : "Atividade não encontrada"}
           </Text>
@@ -180,44 +121,38 @@ export default function DetalheAtividade() {
     <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={[styles.titulo, { color: cores.destaque }]}>
-          {atividade.titulo}
+          {licao.titulo}
         </Text>
 
-        <Image source={atividade.imagem} style={styles.imagem} />
-
+        <Text style={[styles.subtitulo, { color: cores.destaque }]}>
+          Conteúdo da lição ·{" "}
+          {nivel === "iniciante"
+            ? "Iniciante"
+            : nivel === "intermediario"
+              ? "Intermediário"
+              : "Avançado"}
+        </Text>
         <Text style={[styles.descricao, { color: cores.texto }]}>
-          {atividade.descricao}
+          {licao.introducao}
         </Text>
 
-        <View style={styles.blocoTexto}>
-          <Text style={[styles.subtitulo, { color: cores.destaque }]}>
-            Objetivo
-          </Text>
-          <Text style={[styles.texto, { color: cores.textoSecundario }]}>
-            {atividade.objetivo}
-          </Text>
-        </View>
-
-        <View style={styles.blocoTexto}>
-          <Text style={[styles.subtitulo, { color: cores.destaque }]}>
-            Etapas
-          </Text>
-          {atividade.passos.map((passo, indice) => (
-            <Text
-              key={passo}
-              style={[styles.texto, { color: cores.textoSecundario }]}
-            >
-              {indice + 1}. {passo}
+        {licao.topicos.map((topico) => (
+          <View key={topico.titulo} style={styles.blocoTexto}>
+            <Text style={[styles.subtitulo, { color: cores.destaque }]}>
+              {topico.titulo}
             </Text>
-          ))}
-        </View>
+            <Text style={[styles.texto, { color: cores.textoSecundario }]}>
+              {topico.texto}
+            </Text>
+          </View>
+        ))}
       </ScrollView>
       <View style={[styles.footer, { backgroundColor: cores.fundo }]}>
         <Button
-          label={carregando ? "Carregando atividade..." : "Responder atividade"}
+          label={carregando ? "Carregando lição..." : "Começar atividade"}
           disabled={carregando}
           onPress={() =>
-            router.push({
+            router.replace({
               pathname: "/atividade-quiz/[id]",
               params: { id: String(idAtividade) },
             })
@@ -252,13 +187,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
-  },
-
-  imagem: {
-    width: "100%",
-    height: 220,
-    resizeMode: "contain",
-    borderRadius: 18,
   },
 
   descricao: {
