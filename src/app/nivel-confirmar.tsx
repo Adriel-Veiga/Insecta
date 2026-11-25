@@ -1,6 +1,7 @@
 //TELA DE CONFIRMAÇÃO DE NÍVEL (a tela que aparece depois da escolha do nível, para confirmar a escolha)
 import { useTema } from "@/contexts/tema";
 import { getUsuarioLogadoId, salvarNivel } from "@/database/db";
+import { aviso } from "@/utils/aviso";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -30,10 +31,6 @@ const conteudoPorNivel = {
   },
 };
 
-const avancar = () => {
-  router.push("/nivel-transicao");
-};
-
 export default function NivelConfirmar() {
   const db = useSQLiteContext();
   const { cores } = useTema();
@@ -51,13 +48,24 @@ export default function NivelConfirmar() {
     if (!nivel) return;
     try {
       const usuarioId = await getUsuarioLogadoId();
-      if (usuarioId) {
-        await salvarNivel(db, usuarioId, nivel);
-      }
-      router.push("/user");
-    } catch (erro) {
-      console.log(erro);
+      if (!usuarioId) throw new Error("Nenhum usuário está conectado.");
+      await salvarNivel(db, usuarioId, nivel);
+      router.replace("/user");
+    } catch {
+      aviso("Erro", "Não foi possível salvar seu nível.");
     }
+  };
+
+  const avancar = () => {
+    if (!nivel) return;
+    if (nivel === "iniciante") {
+      void confirmar();
+      return;
+    }
+    router.push({
+      pathname: "/nivel-transicao",
+      params: { nivelPretendido: nivel },
+    });
   };
 
   const tentarNovamente = () => {

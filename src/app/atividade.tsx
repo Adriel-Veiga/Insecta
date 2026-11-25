@@ -31,7 +31,11 @@ export default function Atividade() {
   }>();
 
   const perguntas =
-    nivelPretendido === "avancado" ? perguntasAvancado : perguntasIntermediario;
+    nivelPretendido === "avancado"
+      ? perguntasAvancado
+      : nivelPretendido === "intermediario"
+        ? perguntasIntermediario
+        : [];
 
   const [indiceAtual, setIndiceAtual] = useState(0);
   const [acertos, setAcertos] = useState(0);
@@ -41,6 +45,22 @@ export default function Atividade() {
 
   const perguntaAtual = perguntas[indiceAtual];
   const ultimaPergunta = indiceAtual === perguntas.length - 1;
+
+  if (perguntas.length === 0) {
+    return (
+      <SafeAreaView style={[styles.safe, { backgroundColor: cores.fundo }]}>
+        <View style={styles.container}>
+          <Text style={[styles.progresso, { color: cores.textoSecundario }]}>
+            Nível de avaliação não encontrado.
+          </Text>
+          <Button
+            label="Escolher nível"
+            onPress={() => router.replace("/nivel")}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   const responder = async (indiceEscolhido: number) => {
     const acertou = indiceEscolhido === perguntaAtual.respostaCorreta;

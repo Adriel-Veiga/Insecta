@@ -1,3 +1,4 @@
+//TELA DE NOTIFICAÇÕES
 import { Button } from "@/components/button";
 import { useTema } from "@/contexts/tema";
 import { router } from "expo-router";

@@ -4,6 +4,7 @@ export type Pergunta = {
   enunciado: string;
   alternativas: string[];
   respostaCorreta: number;
+  explicacao?: string;
 };
 
 export const perguntasIntermediario: Pergunta[] = [
@@ -151,6 +152,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
       enunciado: "Qual componente executa instruções e cálculos no computador?",
       alternativas: ["Processador (CPU)", "Monitor", "Teclado", "Gabinete"],
       respostaCorreta: 0,
+      explicacao:
+        "A CPU processa instruções e cálculos. Monitor, teclado e gabinete têm outras funções e não executam os programas.",
     },
     {
       id: 2,
@@ -162,12 +165,16 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Conectar o computador à internet",
       ],
       respostaCorreta: 1,
+      explicacao:
+        "A RAM guarda temporariamente os dados dos programas em uso. Arquivos que precisam permanecer salvos ficam no SSD ou HD.",
     },
     {
       id: 3,
       enunciado: "Qual peça conecta os principais componentes do computador?",
       alternativas: ["Placa-mãe", "Caixa de som", "Mouse", "Impressora"],
       respostaCorreta: 0,
+      explicacao:
+        "A placa-mãe permite que os principais componentes se conectem e se comuniquem. Os demais itens não fazem essa ligação interna.",
     },
     {
       id: 4,
@@ -179,6 +186,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Fornecer energia da tomada",
       ],
       respostaCorreta: 1,
+      explicacao:
+        "SSD e HD são unidades de armazenamento: guardam arquivos e programas. Não servem para resfriar o processador, controlar o cursor ou fornecer energia.",
     },
   ],
   2: [
@@ -192,6 +201,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Um tipo de conexão sem fio",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Phishing é uma tentativa de enganar alguém para obter dados. Backup, atualização e conexão sem fio são conceitos diferentes.",
     },
     {
       id: 2,
@@ -203,6 +214,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Seu nome e ano de nascimento",
       ],
       respostaCorreta: 2,
+      explicacao:
+        "Uma senha longa e exclusiva é mais difícil de adivinhar e evita que a exposição de uma conta comprometa outras. Senhas previsíveis ou reutilizadas são arriscadas.",
     },
     {
       id: 3,
@@ -214,6 +227,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Acesso sem precisar de senha",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "A autenticação de dois fatores pede uma confirmação adicional além da senha. Ela não cria outra senha igual nem remove a necessidade de autenticação.",
     },
     {
       id: 4,
@@ -226,6 +241,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Responder com sua senha para verificar a mensagem",
       ],
       respostaCorreta: 2,
+      explicacao:
+        "Links inesperados que pedem senha podem ser phishing. Não os abra; confirme a solicitação diretamente por um canal oficial.",
     },
   ],
   3: [
@@ -239,6 +256,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Explorador de arquivos",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "O navegador abre e exibe páginas da internet. Calculadora, editor de texto e explorador de arquivos têm outras finalidades.",
     },
     {
       id: 2,
@@ -250,6 +269,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Apagar o histórico de todos os sites",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Um mecanismo de busca localiza páginas e informações com palavras-chave. Ele não conserta peças nem altera a conexão Wi-Fi.",
     },
     {
       id: 3,
@@ -261,6 +282,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Um tipo de arquivo compactado",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "A URL é o endereço que identifica uma página na web. Memória temporária, senha e arquivo compactado não são endereços de sites.",
     },
     {
       id: 4,
@@ -273,6 +296,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Escolher sempre o primeiro resultado",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Autoria, data e comparação com outras fontes ajudam a avaliar a confiabilidade. Título, posição no resultado ou compartilhamento rápido não garantem que algo seja verdadeiro.",
     },
   ],
   4: [
@@ -286,6 +311,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Uma peça usada para imprimir",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "O sistema operacional administra o computador e seus programas. Cabos, documentos e peças de impressão não desempenham esse papel.",
     },
     {
       id: 2,
@@ -297,6 +324,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Tela de impressão",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "A barra de tarefas costuma reunir atalhos e mostrar aplicativos abertos. Lixeira, downloads e tela de impressão têm outras funções.",
     },
     {
       id: 3,
@@ -308,6 +337,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Para desativar os programas instalados",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Atualizações trazem melhorias e correções de segurança. Elas não apagam documentos nem substituem peças do computador.",
     },
     {
       id: 4,
@@ -319,6 +350,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Um tipo de memória permanente",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Um aplicativo é um programa que executa uma tarefa no dispositivo. Tomada, cabo e memória são elementos físicos com outras funções.",
     },
   ],
   5: [
@@ -332,6 +365,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Proteger o computador contra quedas",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Pastas agrupam arquivos relacionados para facilitar a organização. Brilho, conexão e proteção física não são funções de uma pasta.",
     },
     {
       id: 2,
@@ -344,6 +379,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "A data em que o computador foi comprado",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "A extensão geralmente indica o formato do arquivo, como PDF. Ela não informa tamanho da tela, senha ou quando o computador foi comprado.",
     },
     {
       id: 3,
@@ -355,6 +392,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Ele é copiado para a internet",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Ao mover um arquivo, ele passa a ficar no novo local. Isso não o envia por email, não muda seu formato e não o publica na internet.",
     },
     {
       id: 4,
@@ -366,6 +405,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Documento novo final final",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Um nome descritivo identifica melhor o conteúdo do documento. Nomes genéricos ou repetidos tornam mais difícil encontrá-lo depois.",
     },
   ],
   6: [
@@ -379,6 +420,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Usar letras maiúsculas para gritar",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Uma conversa respeitosa usa linguagem clara e não expõe mensagens privadas. Repetir mensagens e escrever em maiúsculas pode incomodar ou parecer agressivo.",
     },
     {
       id: 2,
@@ -390,6 +433,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "A senha de todos os destinatários",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Conferir destinatário, assunto e anexos evita enviar a mensagem ou arquivos errados. Senhas e histórico de navegação de outras pessoas não devem ser solicitados.",
     },
     {
       id: 3,
@@ -401,6 +446,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Enviar para desconhecidos",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Pedir autorização respeita a privacidade da pessoa retratada. Publicar sem avisar ou compartilhar dados pessoais pode expô-la sem consentimento.",
     },
     {
       id: 4,
@@ -413,6 +460,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Um arquivo de sistema",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Uma ferramenta de mensagens apropriada permite conversar diretamente com o colega. Uma publicação pública expõe a conversa a outras pessoas.",
     },
   ],
   7: [
@@ -421,6 +470,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
       enunciado: "Qual componente executa instruções no computador?",
       alternativas: ["Processador (CPU)", "Monitor", "Teclado", "Impressora"],
       respostaCorreta: 0,
+      explicacao:
+        "A CPU executa instruções. Monitor, teclado e impressora são dispositivos de saída ou entrada, não o componente que processa as instruções.",
     },
     {
       id: 2,
@@ -433,12 +484,16 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Enviar também o código de verificação",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Um pedido inesperado de senha pode ser phishing. Não abra o link nem compartilhe sua senha ou código; procure o serviço pelo canal oficial.",
     },
     {
       id: 3,
       enunciado: "Qual programa permite visitar sites?",
       alternativas: ["Navegador", "Calculadora", "Bloco de notas", "Lixeira"],
       respostaCorreta: 0,
+      explicacao:
+        "O navegador é o programa usado para visitar sites. Calculadora, bloco de notas e lixeira não têm essa função.",
     },
     {
       id: 4,
@@ -450,6 +505,8 @@ export const perguntasPorAtividade: Record<number, Pergunta[]> = {
         "Compartilhar a senha com colegas",
       ],
       respostaCorreta: 0,
+      explicacao:
+        "Uma cópia de segurança permite recuperar arquivos se os originais forem perdidos. Reutilizar senhas, apagar atualizações ou compartilhá-las não protege os arquivos.",
     },
   ],
 };

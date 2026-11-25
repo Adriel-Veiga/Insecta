@@ -1,13 +1,14 @@
 //
 import { useTema } from "@/contexts/tema";
+import { carregarNivelUsuario } from "@/database/db";
 import {
-    calcularProgressoGeral,
-    carregarProgressoAtividades,
+  calcularProgressoGeral,
+  carregarProgressoAtividades,
 } from "@/database/progresso-atividades";
 import { useFocusEffect } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState, type ReactNode } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 type CabecalhoProgressoProps = {
   progresso?: number;
@@ -21,12 +22,6 @@ const iconesPorNivel: Record<string, number> = {
   avancado: require("../assets/Icons/avancado.png"),
 };
 
-const nomesPorNivel: Record<string, string> = {
-  iniciante: "Iniciante",
-  intermediario: "Intermediário",
-  avancado: "Avançado",
-};
-
 export function CabecalhoProgresso({
   progresso,
   nivel,
@@ -35,25 +30,34 @@ export function CabecalhoProgresso({
   const db = useSQLiteContext();
   const { cores } = useTema();
   const [progressoCarregado, setProgressoCarregado] = useState(0);
+  const [nivelCarregado, setNivelCarregado] = useState<string | null>(null);
 
   useFocusEffect(
     useCallback(() => {
-      if (progresso !== undefined) return;
+      if (progresso !== undefined && nivel !== undefined) return;
       let ativo = true;
-      carregarProgressoAtividades(db)
-        .then((dados) => {
-          if (ativo) setProgressoCarregado(calcularProgressoGeral(dados));
+      Promise.all([carregarProgressoAtividades(db), carregarNivelUsuario(db)])
+        .then(([dados, nivelUsuario]) => {
+          if (!ativo) return;
+          setProgressoCarregado(calcularProgressoGeral(dados));
+          setNivelCarregado(nivelUsuario);
         })
         .catch(() => {
-          if (ativo) setProgressoCarregado(0);
+          if (!ativo) return;
+          setProgressoCarregado(0);
+          setNivelCarregado(null);
         });
       return () => {
         ativo = false;
       };
-    }, [db, progresso]),
+    }, [db, nivel, progresso]),
   );
 
-  const nivelNormalizado = nivel?.toLowerCase() ?? "";
+  const nivelNormalizado =
+    (nivel ?? nivelCarregado)
+      ?.normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase() ?? "";
 
   return (
     <View style={styles.header}>
@@ -61,15 +65,6 @@ export function CabecalhoProgresso({
         source={iconesPorNivel[nivelNormalizado] ?? iconesPorNivel.iniciante}
         style={styles.iconeEsquerda}
       />
-
-      {nomesPorNivel[nivelNormalizado] ? (
-        <Text
-          numberOfLines={1}
-          style={[styles.nivel, { color: cores.textoSecundario }]}
-        >
-          {nomesPorNivel[nivelNormalizado]}
-        </Text>
-      ) : null}
 
       <View
         style={[styles.trilho, { backgroundColor: cores.trilho }]}
